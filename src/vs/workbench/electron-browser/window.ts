@@ -30,7 +30,7 @@ import { IResourceInput } from 'vs/platform/editor/common/editor';
 import { IExtensionService } from 'vs/workbench/services/extensions/common/extensions';
 import { KeyboardMapperFactory } from 'vs/workbench/services/keybinding/electron-browser/keybindingService';
 import { Themable } from 'vs/workbench/common/theme';
-import { ipcRenderer as ipc, webFrame } from 'electron';
+import { /*BrowserWindow, */ipcRenderer as ipc, webFrame } from 'electron';
 import { IWorkspaceEditingService } from 'vs/workbench/services/workspace/common/workspaceEditing';
 import { IMenuService, MenuId, IMenu, MenuItemAction, ICommandAction } from 'vs/platform/actions/common/actions';
 import { IContextKeyService } from 'vs/platform/contextkey/common/contextkey';
@@ -102,6 +102,17 @@ export class ElectronWindow extends Themable {
 
 		// React to editor input changes
 		this._register(this.editorService.onDidActiveEditorChange(() => this.updateTouchbarMenu()));
+
+		this._register(this.editorService.onDidActiveEditorChange(() => {
+			let editorName = this.editorService.activeEditor.getName();
+			let result = ipc.sendSync('editor-canchangeselection', [editorName]);
+
+			if(result === false)
+			{
+				//지정된 파일이 아닌 경우 경고!
+				ipc.send('editor-selectionchanged', [editorName]);
+			}
+		}));
 
 		// prevent opening a real URL inside the shell
 		[DOM.EventType.DRAG_OVER, DOM.EventType.DROP].forEach(event => {

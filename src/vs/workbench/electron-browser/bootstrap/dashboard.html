@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' https: data:; media-src 'none'; child-src 'self'; object-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; font-src 'self' https:;"> -->
+	<!-- <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'" /> -->
+	<link href="styles/semantic.min.css" rel="stylesheet" />
+	<link href="styles/style.css" rel="stylesheet" />
+</head>
+
+<body>
+	<div class="sidenav">
+		<ul>
+			<li>
+				<div id="cmdLeftTop"><span>LeftTop</span></div>
+			</li>
+			<li>
+				<div id="cmdLeftBottom"><span>LeftBottom</span></div>
+			</li>
+		</ul>
+	</div>
+	<div class="sv_area">
+		<img src="images/sub_visual.jpg" />
+		<p class="tit">나의 코딩방</p>
+		<div class="blue_line">
+			<div class="w1200">
+				<a href="/"><i class="home icon inverted"></i></a>
+				<img src="images/sv_arrow.png" />
+				<a href="/MyCoding" class="curr">나의 코딩방</a>
+			</div>
+		</div>
+	</div>
+	<div id="contain">
+		<div class="contain_in">
+			<div class="room_cover">
+					<div class="left_common">
+							<div class="top_info">
+								<p class="box_tit">
+									<a href="/MyCoding">
+										나의 코딩방
+									</a>
+								</p>
+								<span>
+									<img src="@memberThumb" />
+								</span>
+								<p id="lblUsername" class="name"></p>
+								<p id="lblEmail" class="acct"></p>
+								<!-- @*<div class="lv_box">
+									<img src="images/level1.png" class="lv1" />
+									<span class="lv_1">1</span>
+								</div>*@ -->
+								<input id="btnSome" type="button" class="join-btn login-btn" value="그냥 뭔가 하는 버튼" />
+								<span id="txtFocused">나의 정보 관리</span>
+								<div class="setting" style="padding-right:22px;">
+									<i class="setting icon grey"></i>
+									<a href="/MyCoding/My"><span>내 정보 설정</span></a>
+								</div>
+
+								<div id="divExpertSetting" class="setting" style="display: none;">
+									<i class="setting icon grey"></i>
+									<a href="/LMS/My"><span>전문가 정보 설정</span></a>
+								</div>
+							</div>
+							<div class="mid_info">
+								<p>
+									<img src="images/comm_icon01.jpg" />
+									<span>학습 관리</span>
+								</p>
+								<div class="drop_down">
+									<ul>
+										<li>
+											<a href="javascript:;" class="drop_btn">나의강의실<span><i class="dropdown icon grey small"></i></span></a>
+											<div class="drop_box" style="display:none;">
+												<ul>
+													<!--class="url_on"-->
+													<li><a href="/MyCoding/List">수강 중인 강좌</a></li>
+													<li><a href="/MyCoding/BookMark">나의 북마크</a></li>
+													<li><a href="/MyCoding/Previous">수강일이 지난 강좌</a></li>
+												</ul>
+											</div>
+										</li>
+										<!-- @*<li>
+											<a href="javascript:;" class="drop_btn">평가 & 검사<span><i class="dropdown icon grey small"></i></span></a>
+											<div class="drop_box" style="display:none;">
+												<ul>
+													<li><a href="/MyCoding/Test">코딩 레벨 테스트</a></li>
+													<li><a href="/MyCoding/Test/Coding">제출 결과 확인</a></li>
+												</ul>
+											</div>
+										</li>*@ -->
+									</ul>
+								</div>
+							</div>
+							<div class="bot_info">
+								<p>
+									<img src="images/comm_icon02.jpg" />
+									<span>나의 정보 관리</span>
+								</p>
+								<div class="drop_down">
+									<ul>
+										<li>
+											<a href="javascript:;" class="drop_btn">회원 정보<span><i class="dropdown icon grey small"></i></span></a>
+											<div class="drop_box" style="display:none;">
+												<ul>
+													<li><a href="/MyCoding/My">회원정보 수정</a></li>
+													<!-- @*<li><a href="/MyCoding/My/Level">나의 레벨 확인</a></li>*@ -->
+													<li><a href="/MyCoding/My/Alarm">나의 알림 설정</a></li>
+												</ul>
+											</div>
+										</li>
+										<li>
+											<a href="javascript:;" class="drop_btn">내가 작성한 글<span><i class="dropdown icon grey small"></i></span></a>
+											<div class="drop_box" style="display:none;">
+												<ul>
+													<li><a href="/MyCoding/Board/CSQna">나의 질문/답변</a></li>
+													<li><a href="/MyCoding/Board/Free">자유게시판</a></li>
+													<!-- @*<li><a href="javascript:;">문제 게시판</a></li>*@
+													@*<li><a href="/MyCoding/Board/Question">고객센터 1:1 상담</a></li>*@ -->
+												</ul>
+											</div>
+										</li>
+										<li>
+											<a href="javascript:;" class="drop_btn">문제 정보<span><i class="dropdown icon grey small"></i></span></a>
+											<div class="drop_box">
+												<ul>
+													<!-- @*<li><a href="javascript:;">내가 푼 문제</a></li>
+											<li><a href="javascript:;">내가 출제한 문제</a></li>*@ -->
+													<li><a href="/MyCoding/Question/Bookmark">북마크 문제</a></li>
+												</ul>
+											</div>
+										</li>
+										<!-- @*<li>
+											<a href="javascript:;" class="drop_btn">코딩 챌린지 정보<span><i class="dropdown icon grey small"></i></span></a>
+											<div class="drop_box">
+												<ul>
+													<li><a href="javascript:;">참가했던 대회</a></li>
+													<li><a href="/MyCoding/Challenge/Schedule">참가 예정 대회</a></li>
+												</ul>
+											</div>
+										</li>*@ -->
+										<!-- @*<li>
+									<a href="javascript:;" class="drop_btn">결제 정보</a>
+								</li>
+								<li>
+									<a href="javascript:;" class="drop_btn">쿠폰/포인트</a>
+								</li>*@ --> -->
+									</ul>
+								</div>
+							</div>
+						</div>
+				<div class="right_content right_area">
+					<div class="info_box">
+						<!-- @*<div class="box01">
+								<p class="grade">나의 등급</p>
+								<img src="images/lv01.png" class="flexible" />
+								<span class="lv_txt">1</span>
+								<p class="point"><span>30</span>포인트</p>
+							</div>*@ -->
+						<div class="box02">
+							<p class="enroll_info">수강 정보</p>
+							<ul>
+								<li>
+									<span class="tit">수강 중인 강좌</span>
+									<span class="result"><b>@Model.InProgressLectures?.Count</b>개</span><br />
+								</li>
+								<li>
+									<span class="tit">수강 기간 만료 강좌</span>
+									<span class="result"><b>@Model.EndOfDurationLectures?.Count</b>개</span><br />
+								</li>
+								<li>
+									<span class="tit">수강 신청중인 강좌</span>
+									<span class="result"><b>@Model.NotApprovedLectures?.Count</b>개</span>
+								</li>
+								<!-- <li>
+										<span class="tit">입금 대기 강좌</span>
+										<span class="result"><b>0</b>개</span><br />
+									</li> -->
+							</ul>
+						</div>
+						<div class="box03">
+							<p class="progress">전체 학습 진행도</p>
+							<div class="result">
+								@{
+									var wholeLesson = Model.EndOfDurationLectures?.Count + Model.InProgressLectures?.Count;
+									var progressVal = ((double)Model.EndOfDurationLectures?.Count / (double)wholeLesson) * 100;
+									<div id="progressBar" class="progress-circle @if (Math.Truncate(progressVal) > 50) {@Html.Raw("over50"); } @Html.Raw("p" + Math.Truncate(progressVal))" data-progress="@Math.Truncate(progressVal)">
+										<!-- p70이라는 클래스를 변경시키면 됩니다. 퍼센트별로 클래시 변경 만약 15% 라면 p15 -->
+										@if (wholeLesson <= 0)
+										{
+											<span>0%</span>
+										}
+										else
+										{
+											<span>@Math.Truncate(progressVal)%</span>
+										}
+										<!-- 해당 퍼센트 텍스트 입니다 -->
+										<div class="left-half-clipper">
+											<div class="first50-bar"></div>
+											<div class="value-bar"></div>
+										</div>
+									</div>
+								}
+								<div class="right">
+									<p>전체 강좌 <span>@wholeLesson</span>개 중<br /><span>@Model.EndOfDurationLectures?.Count</span>개 기간 만료</p>
+									<span><img src="images/progress_human.jpg" /></span>
+								</div>
+							</div>
+						</div>
+						<div class="box04">
+							<p class="alarm">새 알림</p>
+							<ul>
+								<!-- 알림 추가시 들어가야 할 부분-->
+								<li>
+									<!-- 어제 이후 -->
+									<span class="tit">새로운 알림</span>
+									<span class="result"><b>@Model.NewAlarm</b>개</span>
+								</li>
+								<li>
+									<span class="tit">읽지 않은 알림</span>
+									<span class="result"><b>@Model.UnreadAlarm</b>개</span>
+								</li>
+								<li>
+									<span class="tit">전체 알림</span>
+									<span class="result"><b>@Model.TotalAlarm</b>개</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="list_area">
+						<p class="tit">최근 수강 강좌</p>
+							<div id="divNoRecentLectures" class="no_enroll" style="display: none;">
+								<span>
+									<img src="images/noenroll_default.jpg" />
+								</span>
+								<div class="alert_text">
+									<p class="tit">
+										<span class="user_name">@strUserName</span>님<br />
+										아직 수강중인 강좌가 없으시네요!
+									</p>
+									<p class="desc">
+										모두의 코딩에서 제공하는 최고의 코딩 교육 서비스를 지금 만나보세요.
+									</p>
+									<a href="/vod">
+										<i class="youtube play icon"></i>
+										모두의 코딩 VOD 강좌 보러가기
+									</a>
+								</div>
+							</div>
+							<table id="divRecentLectures" style="display:none;">
+								<colgroup>
+									<col width="12%">
+									<col width="*%">
+									<col width="35%">
+									<col width="12%">
+									<col width="12%">
+								</colgroup>
+								<thead>
+								<th>날짜</th>
+								<th>강좌명</th>
+								<th>학습 진도</th>
+								<th>남은 수강일</th>
+								<th>학습하기</th>
+								</thead>
+								<tbody id="tbodyRecentLectures">
+
+									<!-- @foreach (var item in Model.RecentLectures)
+									{
+										var studentProgress = 0;
+										if (item.MemberLessonCnt != 0)
+										{
+											studentProgress = (item.MemberLessonCnt / item.LessonCnt) * 100;
+										}
+										var averageProgress = (Math.Floor(item.TotalAVGLessonCnt) / item.LessonCnt) * 100;
+										var leftDay = "--";
+										var dayCalculate = new TimeSpan();
+										if (item.AlwaysOpen == 1)
+										{
+											leftDay = "∞";
+										}
+										if (item.EndDate != null && item.AlwaysOpen == 0)
+										{
+											var endDate = (DateTime)item.EndDate;
+											dayCalculate = endDate.Subtract(DateTime.Now);
+											if (dayCalculate < DateTime.Now.TimeOfDay)
+											{
+												leftDay = "--";
+											}
+											else
+											{
+												leftDay = DateTime.Now.Subtract(endDate).ToString("dd") + " 일";
+											}
+										}
+
+										<tr>
+											<td>@item.CreateDate.ToString("yyyy.MM.dd")</td>
+											@if (item.Category == 3)
+											{
+												<td><a href="/live/@item.LectureId">@item.Title</a></td>
+											}
+											else
+											{
+												<td><a href="/Vod/@item.LectureId">@item.Title</a></td>
+											}
+											<td class="idx_prog_bar">
+												<span>나</span>
+												<div class="ui aqua progress studentProgress privateProgress" data-value="@Math.Truncate((double)studentProgress)" data-one="@item.MemberLessonCnt" data-two="@item.LessonCnt" data-total="100">
+													<div class="bar">
+														<div class="progress"></div>
+													</div>
+												</div>
+												<div class="label"><span class="t-black">@item.MemberLessonCnt</span> / @item.LessonCnt</div>
+												<br />
+												<span>평균</span>
+												<div class="ui aqua avg progress studentProgress" data-value="@Math.Truncate((double)averageProgress)" data-total="100">
+													<div class="bar">
+														<div class="progress"></div>
+													</div>
+												</div>
+												<div class="label"><span class="t-black">@Math.Floor(item.TotalAVGLessonCnt)</span> / @item.LessonCnt</div>
+											</td>
+											@if (leftDay == "--")
+											{
+												<td>기한 만료</td>
+												<td>-</td>
+											}
+											else
+											{
+												<td class="count_down">@leftDay</td>
+												var lastLessonId = item.LastLessonId;
+												@if (item.Category != 3)
+												{
+													@if (lastLessonId == null)
+													{
+														<td><a href="/Vod/@item.LectureId" class="continue">이어서하기</a></td>
+													}
+													else
+													{
+														<td><a href="/Vod/@item.LectureId/Lesson/@item.LastLessonId" class="continue">이어서하기</a></td>
+													}
+												}
+												else
+												{
+													@if (lastLessonId == null)
+													{
+														<td><a href="/live/@item.LectureId" class="continue">이어서하기</a></td>
+													}
+													else
+													{
+														<td><a href="/live/@item.LectureId/Lesson/@item.LastLessonId" class="continue">이어서하기</a></td>
+													}
+												}
+											}
+										</tr>
+									} -->
+
+								</tbody>
+							</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<!-- <script type="text/javascript">
+			$.validator.setDefaults({
+				submitHandler: function () {
+					location.href = "emailCertification.html";
+				},
+			});
+		</script> -->
+		<!-- <script type="text/javascript">
+			$(function () {
+				$('#paging').paging({
+					current: 1, max: 10,
+					onclick: function (e, page) {
+						current: page
+					}
+				});
+				$(".privateProgress").each(function (i) {
+					var progress = ($(this).data("one") / $(this).data("two")) * 100;
+					$(this).data("value", Math.trunc(progress));
+					$(".privateProgress").progress();
+				});
+			});
+
+			// 스티커 이미지 Drag && Drop ... 수정 필요
+			function allowDrop(ev) {
+				ev.preventDefault();
+			}
+
+			function drag(ev) {
+				ev.dataTransfer.setData("text", ev.target.id);
+			}
+
+			function drop(ev) {
+				ev.preventDefault();
+				var data = ev.dataTransfer.getData("text");
+				ev.target.appendChild(document.getElementById(data));
+			}
+
+		</script> -->
+	}
+</body>
+
+<script src="scripts/commonLib.js"></script>
+<script src="scripts/dashboard.js"></script>
+</html>

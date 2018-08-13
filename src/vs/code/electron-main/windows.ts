@@ -14,7 +14,7 @@ import { IBackupMainService } from 'vs/platform/backup/common/backup';
 import { IEnvironmentService, ParsedArgs } from 'vs/platform/environment/common/environment';
 import { IStateService } from 'vs/platform/state/common/state';
 import { CodeWindow, defaultWindowState } from 'vs/code/electron-main/window';
-import { ipcMain as ipc, screen, BrowserWindow, dialog, systemPreferences, app } from 'electron';
+import { ipcMain as ipc, screen, BrowserWindow, dialog, systemPreferences, app, ipcRenderer } from 'electron';
 import { IPathWithLineAndColumn, parseLineAndColumnAware } from 'vs/code/node/paths';
 import { ILifecycleService, UnloadReason, IWindowUnloadEvent } from 'vs/platform/lifecycle/electron-main/lifecycleMain';
 import { IConfigurationService } from 'vs/platform/configuration/common/configuration';
@@ -117,6 +117,8 @@ export class WindowsManager implements IWindowsMainService {
 	private dialogs: Dialogs;
 	private workspacesManager: WorkspacesManager;
 
+	private _openPaths: string[];
+
 	private _onWindowReady = new Emitter<ICodeWindow>();
 	onWindowReady: CommonEvent<ICodeWindow> = this._onWindowReady.event;
 
@@ -206,6 +208,37 @@ export class WindowsManager implements IWindowsMainService {
 
 				// Event
 				this._onWindowReady.fire(win);
+			}
+		});
+
+		ipc.on('control-someaction', () => {
+			this._openPaths = ['D:/test', 'D:/test/test.py'];
+
+			let openUris : URI[] = [];
+
+			this._openPaths.forEach(path => {
+				openUris.push(URI.file(path));
+			});
+
+			this.open({
+				context: OpenContext.DESKTOP,
+				cli: this.environmentService.args,
+				urisToOpen: openUris,// [URI.file('D:/test'), URI.file('D:/test/test.py')],
+				forceNewWindow: false,
+				forceOpenWorkspaceAsFile: false// options.dialogOptions && !equals(options.dialogOptions.filters, WORKSPACE_FILTER)
+			});
+		});
+
+		ipc.on('editor-canchangeselection', (evt, args) => {
+			if(!this._openPaths || this._openPaths.length === 0)
+			{
+				evt.returnValue = true;
+			}
+			else
+			{
+				let canChange = this._openPaths.some(path => path.indexOf(args) !== -1);
+
+				evt.returnValue = canChange;
 			}
 		});
 

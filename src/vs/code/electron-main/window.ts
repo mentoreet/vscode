@@ -10,7 +10,7 @@ import * as objects from 'vs/base/common/objects';
 import * as nls from 'vs/nls';
 import URI from 'vs/base/common/uri';
 import { IStateService } from 'vs/platform/state/common/state';
-import { shell, screen, BrowserWindow, systemPreferences, app, TouchBar, nativeImage } from 'electron';
+import { shell, screen, Rectangle, BrowserWindow, systemPreferences, app, TouchBar, nativeImage, ipcMain } from 'electron';
 import { TPromise, TValueCallback } from 'vs/base/common/winjs.base';
 import { IEnvironmentService, ParsedArgs } from 'vs/platform/environment/common/environment';
 import { ILogService } from 'vs/platform/log/common/log';
@@ -75,6 +75,9 @@ export class CodeWindow implements ICodeWindow {
 	private currentMenuBarVisibility: MenuBarVisibility;
 	private toDispose: IDisposable[];
 	private representedFilename: string;
+
+	private _controlWin: Electron.BrowserWindow;
+	private _session: any;
 
 	private whenReadyCallbacks: TValueCallback<ICodeWindow>[];
 
@@ -193,6 +196,131 @@ export class CodeWindow implements ICodeWindow {
 		this._win = new BrowserWindow(options);
 		this._id = this._win.id;
 
+		//여기서 그러면 로그인 창을 하나 띄워보자.
+		const loginWinOptions: Electron.BrowserWindowConstructorOptions = {
+			parent:this._win,
+			modal:true,
+			width: this.windowState.width,
+			height: this.windowState.height,
+			x: this.windowState.x,
+			y: this.windowState.y,
+			// width: 800,
+			// height: 600,
+			// x: this.windowState.x,
+			// y: this.windowState.y,
+			// backgroundColor,
+			// minWidth: CodeWindow.MIN_WIDTH,
+			// minHeight: CodeWindow.MIN_HEIGHT,
+			show:false,
+			title: '로그인'
+		};
+
+		const controlWinOptions: Electron.BrowserWindowConstructorOptions = {
+			parent:this._win,
+			alwaysOnTop: true,
+			width: this.windowState.width,
+			height: this.windowState.height,
+			x: this.windowState.x,
+			y: this.windowState.y,
+			// width: 800,
+			// height: 600,
+			// x: this.windowState.x,
+			// y: this.windowState.y,
+			// backgroundColor,
+			// minWidth: CodeWindow.MIN_WIDTH,
+			// minHeight: CodeWindow.MIN_HEIGHT,
+			show:false,
+			title: '로그인'
+		};
+
+		let loginWin = new BrowserWindow(loginWinOptions);
+		loginWin.webContents.toggleDevTools();
+		loginWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/login.html'));
+		loginWin.once('ready-to-show', () => {
+			//child.maximize();
+			//child.setFullScreen(true);
+			this._session = {};
+			loginWin.show();
+		});
+
+		loginWin.on('closed', () => {
+			loginWin = null;
+
+			if(!this._session.userId ||
+				this._session.userId < 1){
+				app.quit();
+			}
+		});
+
+		ipcMain.on('login-succeed', (evt, args) => {
+			//자 여기서 로그인 성공했다고 치자.
+			//그러면 다음은?
+			//해당 학생의 학습 및 시험이 나와야 할 듯.
+			//수강신청한 과목의 학습 진행도 라던지...
+			//진행 예정인 시험 과목이라던지~
+
+			this._session = args;
+			loginWin.close();
+			//loginWin = null;
+
+			this._controlWin = new BrowserWindow(controlWinOptions);
+			this._controlWin.webContents.toggleDevTools();
+			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard.html'));
+			this._controlWin.once('ready-to-show', () => {
+				this._controlWin.show();
+			});
+
+			this._controlWin.on('closed', () => {
+				this._controlWin = null;
+				app.quit();
+			});
+		});
+		ipcMain.on('login-failed', () => {
+			loginWin.webContents.send('login-retry');
+		});
+		ipcMain.on('editor-selectionchanged', (evt, args) => {
+			if(this._controlWin) {
+				this._controlWin.webContents.send('control-someaction-reply', args);
+			}
+		});
+		ipcMain.on('command-controlwindow-lefttop', () => {
+			if(this._controlWin) {
+				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
+				let bounds = this.getCurrentDisplayBounds();
+				this._controlWin.setPosition(bounds.x, bounds.y, true);
+			}
+		});
+
+		ipcMain.on('command-controlwindow-leftbottom', () => {
+			if(this._controlWin) {
+				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
+				let bounds = this.getCurrentDisplayBounds();
+
+				let y = ((bounds.y + bounds.height) - this._controlWin.getSize()[1]) - 45;
+
+				this._controlWin.setPosition(bounds.x, y, true);
+			}
+		});
+
+		this._win.on('blur', () => {
+			if(this._controlWin) {
+				if(this._controlWin.isFocused() === false) {
+					this._controlWin.webContents.send('vscode-focused-out');
+				}
+			}
+		});
+		this._win.on('focus', () => {
+			if(this._controlWin) {
+				if(this._controlWin.isFocused() === false) {
+					this._controlWin.webContents.send('vscode-focused-in');
+				}
+			}
+		});
+
+		// ipcMain.on('control-someaction', () => {
+		// 	this._controlWin.webContents.send('control-someaction-reply');
+		// });
+
 		if (useCustomTitleStyle) {
 			this._win.setSheetOffset(22); // offset dialogs by the height of the custom title bar if we have any
 		}
@@ -306,6 +434,17 @@ export class CodeWindow implements ICodeWindow {
 
 	get readyState(): ReadyState {
 		return this._readyState;
+	}
+
+	private getCurrentDisplayBounds(): Rectangle {
+		let bounds = null;
+
+		let pos = this._controlWin.getPosition();
+		let size = this._controlWin.getSize();
+		let display = screen.getDisplayMatching({x:pos[0], y:pos[1], width:size[0], height:size[1]});
+
+		bounds = display.bounds;
+		return bounds;
 	}
 
 	private handleMarketplaceRequests(): void {

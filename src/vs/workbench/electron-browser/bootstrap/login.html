@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' https: data:; media-src 'none'; child-src 'self'; object-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; font-src 'self' https:;"> -->
+	<!-- <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'" /> -->
+	<link href="styles/semantic.min.css" rel="stylesheet" />
+	<link href="styles/style.css" rel="stylesheet" />
+</head>
+
+<body>
+	<div id="contain">
+		<div class="contain_in">
+			<div class="join-wrap welcmoeImg">
+				<div class="join-title">
+					<dl>
+						<dt>로그인</dt>
+						<dd>"모두를 위한 코딩이 시작되는 곳"</dd>
+					</dl>
+				</div>
+
+				<div class="join-form">
+					<!-- <form id="loginSignupForm" method="post" class="ui grid formlogin-form"> -->
+					<div class="ui grid formlogin-form">
+						<ul>
+							<li>
+								<div class="input-wrap">
+									<h3>이메일</h3>
+									<div class="ui left icon input">
+										<input id="txtEmail" type="email" name="email" placeholder="email@example.com">
+										<i class="mail icon"></i>
+									</div>
+								</div>
+
+								<div class="input-wrap pw-wrap">
+									<h3>비밀번호</h3>
+									<div class="ui left icon input">
+										<input id="txtPassword" type="password" name="password" placeholder="password">
+										<!--  비밀번호가 일치하지 않을 때 -->
+										<i class="lock icon"></i>
+									</div>
+									<!-- @{ if (ViewBag.WrongLoginInfo != null && ViewBag.WrongLoginInfo) { -->
+									<label id="password-error" style="display: none;" class="error errorMsg, t-red" for="password">
+										<i class="warning sign icon"></i>아이디 또는 비밀번호를 확인해주세요.</label>
+									<!-- } if (ViewBag.SocialLoginInfo != null) {//모달화 변경 05/18 기획 -->
+									<!-- <label id="password-error" class="error errorMsg, t-red" for="password">
+										<i class="warning sign icon"></i>@ViewBag.SocialLoginInfo 계정으로 로그인해주세요.</label> -->
+									<!-- } } -->
+								</div>
+							</li>
+							<li>
+								<input id="btnLogin" type="button" class="join-btn login-btn" value="로그인" />
+							</li>
+							<li>
+								<div class="ui checkbox chkBox">
+									<input type="checkbox" name="id-chk" id="id-chk">
+									<label for="id-chk">이메일 저장</label>
+								</div>
+							</li>
+							<li>
+								<div class="pw-join clear">
+									<span>비밀번호가 기억나지 않으신다면?</span>
+									<a href="/Member/ResetPassword" class="ui basic button btn-right">비밀번호 재설정</a>
+								</div>
+								<div class="pw-join">
+									<span>아직 회원이 아니신가요?</span>
+									<a href="/Join" class="ui basic button btn-right">무료 회원 가입</a>
+								</div>
+							</li>
+						</ul>
+					<!-- </form> -->
+					</div>
+				</div>
+
+				<div class="sns-login">
+					<div class="sns-login-title">
+						<h3>다른 서비스 계정으로 로그인</h3>
+					</div>
+					<form asp-controller="Member" asp-action="ExternalLogin" asp-route-returnurl="@ViewData[" ReturnUrl "]" method="post" class="form-horizontal"
+					 id="externalLoginForm">
+						<div class="sns-btn-box clear">
+							<a href="javascript:;" id="btnGoogle" class="btn google">
+								<i class="sns-icon icon-google"></i>
+							</a>
+
+							<a href="javascript:;" id="btnFacebook" class="btn facebook">
+								<i class="sns-icon icon-social-facebook"></i>
+							</a>
+
+							<a href="javascript:;" id="btnNaver" class="btn naver">
+								<span class="sns-icon icon-naver">N</span>
+							</a>
+						</div>
+					</form>
+				</div>
+
+				<!-- 이메일 인증이 안되었을 경우 나오는 모달 -->
+				<div id="emailCertification" class="ui tiny modal clear">
+					<div class="header">이메일 인증 확인</div>
+					<div class="ui medium image email-img" style="text-align:center !important; width:100%;">
+						<img src="images/emailImg.png" style="display:inline-block;">
+					</div>
+					<div class="scrolling content email-text">
+						이메일 인증이 완료되지 않았습니다.
+						<br />
+						<br /> 등록하신 이메일로 인증메일을 확인바랍니다.
+						<br /> 정상적으로 이용하기 위해서 이메일 인증을 해주세요.
+						<br />
+						<br /> 인증 메일이 확인 되지 않으면, 재인증 요청을 클릭해주세요.
+						<br /> 지속저으로 메일 확인이 안 된다면 메일함의 스팸 리스트를
+						<br /> 확인해 주시거나, 관리자 또는 고객 센터에 문의 바랍니다.
+						<br />
+						<br />
+						<p>
+							관리자 : support@mentoreet.com
+							<br />
+						</p>
+						감사합니다.
+					</div>
+					<div class="actions">
+						<div class="ui black deny button">
+							확인
+						</div>
+					</div>
+				</div>
+				<!-- //이메일 인증이 안되었을 경우 나오는 모달 -->
+				<!-- @{ if (ViewBag.Email != null) { -->
+				<div id="verification02" class="ui small modal">
+					<div class="pop_tit_cov">
+						<p class="pop_tit">
+							이메일 인증 완료
+						</p>
+					</div>
+					<div class="complete_con01">
+						<img src="~/images/confirmed_email.jpg" />
+						<p class="tit">
+							이메일 인증이 완료 되었습니다.
+						</p>
+					</div>
+					<div class="pop_btn_cov">
+						<a class="confirm">확인</a>
+					</div>
+				</div>
+				<!-- } } -->
+
+			</div>
+		</div>
+	</div>
+</body>
+
+<!-- <script src="jquery-3.2.1.min.js"></script>
+<script src="jquery-ui.js"></script> -->
+<script src="scripts/commonLib.js"></script>
+<script src="scripts/login.js"></script>
+<!-- Startup via index.js -->
+
+</html>
