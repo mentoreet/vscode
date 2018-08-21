@@ -11,17 +11,19 @@ document.getElementById("btnLogin").onclick = function () {
 
 	let _loginMsg = getElem("password-error");
 
-	var param = { name: _email, password: _password };
-	sendPost('http://localhost:3000/login',
+	var param = { email: _email, password: _password };
+	sendPost('http://localhost:5070/api/token',
 		param,
 		function (result) { //성공시
-			if (result.result === 1) {
-				let result = {
+			if (result.token !== '') {
+				let session = {
 					userId: 1,
-					email: 'netscout82@naver.com',
-					name: '어쩌고저쩌고',
-					roles: []};
-				ipc.send('login-succeed', result);
+					email: _email,
+					token: result.token
+					//name: '어쩌고저쩌고',
+					//roles: []};
+				};
+				ipc.send('login-succeed', session);
 
 				hide(_loginMsg);
 			}

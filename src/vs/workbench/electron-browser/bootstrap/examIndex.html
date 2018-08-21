@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>모두의 코딩</title>
+    <link href='images/favicon_modoo.ico' rel='icon' sizes="64x64">
+    <link href="styles/view_live.css" rel="stylesheet">
+    <link href="styles/semantic.min.css" rel="stylesheet" />
+    <link href="styles/sub.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- 시험 응시전 / 후 관계없이 공통 -->
+    <div class="view_top">
+        <div class="logo_title">
+            <div class="logo_box">
+                <span><img src="images/idp_channel_default.png" /></span>
+                <p id="txtExamTitle">시험 제목</p>
+            </div>
+            <div class="mid_tit">
+                <ul>
+                    <li>
+                        <img src="images/time_img.png" />
+                        <span class="txt">남은 시간 : </span>
+                        <span class="dev" id="examTimer">01:00:00</span>
+                    </li>
+                    <li>
+                        <img src="images/stat_img.png" />
+                        <span class="txt">제출 현황 : </span>
+                        <span class="dev" id="submittedQuestionCnt">0</span>
+                        <span class="txt"> / </span>
+                        <span class="dev totalQuestionCnt">0</span>
+                        <span class="txt"> 문제</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="finish_all_btn">
+                <button id="btnExamFinish" class="finish_all"><i class="icon check"></i> 최종완료</button>
+            </div>
+        </div>
+    </div>
+    <div class="view_left_menu">
+        <ul>
+            <li><a href="javascript:;"><i class="icon bars inverted "></i></a></li>
+            <li>
+                <a href="javascript:;"><i class="icon sign out inverted "></i></a>
+                <div class="balloon">
+                    나가기
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="side_menu_cont" class="open">
+        <div>
+            <a href="javascript:;"><i class="icon close"></i></a>
+            <div class="exam_list">
+                <p class="tit">문제목록</p>
+                <ul>
+                    <li class="toss">
+                        <span class="number">1.</span>
+                        <span class="exam_tit">문제입니다문제입니다문제입니다제입니다 (<b>10</b> 점)</span>
+                        <span class="exam_type multi">객관식</span>
+                        <span class="status">제출</span>
+                    </li>
+                    <li class="">
+                        <span class="number">2.</span>
+                        <span class="exam_tit">문제입니다문제입니다문제입니다 (<b>10</b> 점)</span>
+                        <span class="exam_type multi">객관식</span>
+                        <span class="status">미제출</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 시험 응시전에 나오는 페이지 -->
+    <div id="getStart">
+        <div class="content_box">
+            <img src="images/exam_apply_bg.jpg" />
+            <div>
+                <p>총 <span class="totalQuestionCnt">0</span> 문항</p>
+                <p><span>100</span> 점 만점</p>
+                <p><span id="startLimitTime">0</span> 분</p>
+            </div>
+            <p class="time">
+                시험기간 :
+                <span id="startStartDate">2018.07.10 </span>
+                <span> <i class="icon clock"></i> 00:00</span>
+                <span> ~ </span>
+                <span id="startEndDate">2018.08.10 </span>
+                <span> <i class="icon clock"></i> 00:00</span>
+            </p>
+            <p class="desc">
+            </p>
+            <div class="start_btn">
+                <button id="btnExamStart">시험 응시하기</button>
+            </div>
+        </div>
+    </div>
+    <!-- 시험 응시완료되고 나오는 페이지 -->
+    <div id="exam_left" style="position: absolute; left: 50px; top:50px; width: calc(100% - 50px); height: calc(100% - 50px);">
+        <div class="exam_page content">
+            <div class="btn_box">
+                <div class="select">
+                    <div class="ui selection dropdown small" id="semantic_select">
+                        <input type="hidden" name="gender" />
+                        <i class="dropdown icon"></i>
+                        <div class="default text">문제 목록</div>
+                        <div class="menu">
+                            <div class="item" data-value="0">문제 1 <span><i class="icon check"></i></span></div>
+                            <div class="item" data-value="1">문제 2</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btns">
+                    <button id="btnPrev"><i class="icon angle left"></i> 이전</button>
+                    <button id="btnNext">다음 <i class="icon angle right"></i></button>
+                </div>
+            </div>
+            <div id="question_types">
+                <!-- 객관식문제 -->
+                <div class="multiple">
+                    <p class="main_tit">
+                        <img src="images/choiceImg_mini.jpg" />
+                        <span class="q_count currentQuestionIndex">1</span>.
+                        <span class="q_tit" id="multiple_title"></span>
+                        <span class="q_point">(<b id="multiple_score">0</b>점)</span>
+                    </p>
+                    <p class="q_desc" id="multiple_description">
+                    </p>
+                    <div class="choices">
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="radio" id="choice01">
+                            <label for="choice01">보기 1</label>
+                            <p class="explain" id="multiple1">1</p>
+                        </div>
+                        <br />
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="radio" id="choice02">
+                            <label for="choice02">보기 2</label>
+                            <p class="explain" id="multiple2">2</p>
+                        </div>
+                        <br />
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="radio" id="choice03">
+                            <label for="choice03">보기 3</label>
+                            <p class="explain" id="multiple3">3</p>
+                        </div>
+                        <br />
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="radio" id="choice04">
+                            <label for="choice04">보기 4</label>
+                            <p class="explain" id="multiple4">4</p>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="submit_btn">
+                        <button id="btnMultipleSubmit">답안 제출</button>
+                    </div>
+                </div>
+                <!-- 주관식문제 -->
+                <div class="write" style="display: none;">
+                    <p class="main_tit">
+                        <img src="images/essayImg-min.jpg" />
+                        <span class="q_count currentQuestionIndex">1</span>.
+                        <span class="q_tit" id="subjective_title">문제제목입니다.문제제목입니다.</span>
+                        <span class="q_point">(<b id="subjective_score">10</b>점)</span>
+                    </p>
+                    <p class="q_desc" id="subjective_description">
+                    </p>
+                    <div class="answers">
+                        <p class="ans_tit">문제 답안</p>
+                        <input type="text" name="write_answer" id="txtSubjectiveAnswer" />
+                    </div>
+                    <div class="submit_btn">
+                        <button id="btnSubjectiveSubmit">답안 제출</button>
+                    </div>
+                </div>
+                <!-- 코딩 문제 -->
+                <div class="coding" style="display: none;">
+                    <p class="main_tit">
+                        <img src="images/cidungImg-mini.jpg" />
+                        <span class="q_count currentQuestionIndex">1</span>.
+                        <span class="q_tit" id="coding_title">문제제목입니다.문제제목입니다.</span>
+                        <span class="q_point" id="coding_score">(<b>10</b>점)</span>
+                    </p>
+                    <div class="example_btn">
+                        <button id="btnCodingInOut">입출력 예시 보기</button>
+                    </div>
+                    <p class="q_desc" id="coding_description">
+                    </p>
+                    <div class="code_answer">
+                        <p class="tit">입력</p>
+                        <div class="input_box">
+                            <p class="input_cont" id="coding_input"></p>
+                        </div>
+                        <p class="tit">출력</p>
+                        <div class="output_box">
+                            <p class="output_cont" id="coding_output"></p>
+                        </div>
+                    </div>
+                    <div class="submit_btn">
+                        <button id="btnCodingSubmit">답안 제출</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="alertModal">
+        <p id="saveModalText"></p>
+    </div>
+
+    <template id="menuTemplate">
+        <li class="toss">
+            <span class="number">1.</span>
+            <span class="exam_tit">문제입니다문제입니다문제입니다제입니다 (<b>10</b> 점)</span>
+            <span class="exam_type multi">객관식</span>
+            <span class="status">제출</span>
+        </li>
+    </template>
+    <script src="scripts/commonLib.js" type="text/javascript" charset="utf-8"></script>
+    <script src="scripts/view_live.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

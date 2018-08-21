@@ -1,3 +1,10 @@
+Date.prototype.yyyymmdd = function() {
+	var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+	var dd = this.getDate().toString();
+
+	return `${this.getFullYear()}-${mm.length===2 ? '' : '0'}${mm}-${dd.length===2 ? '' : '0'}${dd}`; // padding
+  };
+
 function getElem(elementId) {
 	var elem = document.getElementById(elementId);
 
@@ -42,6 +49,30 @@ function sendPost(url, jsonData, success, fail) {
 	fetch(url, {
 		method: 'post',
 		headers: {
+			'Accept': 'application/json, text/plain, */*',
+			'Content-Type': 'application/json'
+		},
+  		body: JSON.stringify(jsonData)
+	})
+	.then(res => {
+		if(!res.ok){
+			throw Error(res.statusText);
+		}
+
+		return res.json();
+	})
+	.then(res => success(res))
+	.catch(error => {
+		fail();
+	});
+  	// .then(res => console.log(res));
+}
+
+function sendPostWithToken(url, token, jsonData, success, fail) {
+	fetch(url, {
+		method: 'post',
+		headers: {
+			'Authorization' : `Bearer ${token}`,
 			'Accept': 'application/json, text/plain, */*',
 			'Content-Type': 'application/json'
 		},

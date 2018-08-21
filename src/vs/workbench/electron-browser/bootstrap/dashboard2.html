@@ -247,18 +247,20 @@
 								<colgroup>
 									<col width="12%">
 									<col width="*%">
-									<col width="35%">
+									<col width="12%">
+									<col width="12%">
 									<col width="12%">
 									<col width="12%">
 								</colgroup>
 								<thead>
-								<th>날짜</th>
-								<th>강좌명</th>
-								<th>학습 진도</th>
-								<th>남은 수강일</th>
-								<th>학습하기</th>
+								<th>번호</th>
+								<th>제목</th>
+								<th>응시 및 제출기간</th>
+								<th>점수</th>
+								<th>상태</th>
+								<th>응시 및 결과</th>
 								</thead>
-								<tbody id="tbodyRecentLectures">
+								<tbody id="tbodyExamList">
 								</tbody>
 							</table>
 					</div>
@@ -266,47 +268,9 @@
 			</div>
 		</div>
 	</div>
-		<!-- <script type="text/javascript">
-			$.validator.setDefaults({
-				submitHandler: function () {
-					location.href = "emailCertification.html";
-				},
-			});
-		</script> -->
-		<!-- <script type="text/javascript">
-			$(function () {
-				$('#paging').paging({
-					current: 1, max: 10,
-					onclick: function (e, page) {
-						current: page
-					}
-				});
-				$(".privateProgress").each(function (i) {
-					var progress = ($(this).data("one") / $(this).data("two")) * 100;
-					$(this).data("value", Math.trunc(progress));
-					$(".privateProgress").progress();
-				});
-			});
-
-			// 스티커 이미지 Drag && Drop ... 수정 필요
-			function allowDrop(ev) {
-				ev.preventDefault();
-			}
-
-			function drag(ev) {
-				ev.dataTransfer.setData("text", ev.target.id);
-			}
-
-			function drop(ev) {
-				ev.preventDefault();
-				var data = ev.dataTransfer.getData("text");
-				ev.target.appendChild(document.getElementById(data));
-			}
-
-		</script> -->
 	}
 </body>
 
 <script src="scripts/commonLib.js"></script>
-<script src="scripts/dashboard.js"></script>
+<script src="scripts/dashboard2.js"></script>
 </html>

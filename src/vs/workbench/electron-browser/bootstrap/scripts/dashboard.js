@@ -31,13 +31,20 @@ let cmdLeftBottom = getElem("cmdLeftBottom");
 cmdLeftBottom.onclick = function () {
 	ipc.send("command-controlwindow-leftbottom");
 };
-
+let cmdRightTop = getElem("cmdRightTop");
+cmdRightTop.onclick = function () {
+	ipc.send("command-controlwindow-righttop");
+};
+let cmdRightBottom = getElem("cmdRightBottom");
+cmdRightBottom.onclick = function () {
+	ipc.send("command-controlwindow-rightbottom");
+};
 
 let recentLecturesCount = 1;
 if(recentLecturesCount < 1) {
 	let elems = getElemByClass("right_content");
 	for(var i=0; i<elems.length; i++) {
-		elems[i].setAttribute("style", "height: 1px;");
+		elems[i].setAttribute("style","height: 1px;");
 	}
 
 	let divNoRecentLectures = getElem("divNoRecentLectures");
@@ -50,14 +57,197 @@ else {
 
 let lblUsername = getElem("lblUsername");
 let lblEmail = getElem("lblEmail");
-lblUsername.innerHTML = "어쩌고 저쩌고";
-lblEmail.innerHTML = "netscout82@naver.com";
+lblUsername.innerHTML ="어쩌고 저쩌고";
+lblEmail.innerHTML ="netscout82@naver.com";
 
 let isExpert = true;
 if(isExpert) {
 	let divExpertSetting = getElem("divExpertSetting");
 	show(divExpertSetting);
 }
+
+let sampleData = {
+	"TotalLessonCnt": 454,
+	"TotalMemberLessonCnt": 165,
+	"TotalLectureCnt": 25,
+	"NewAlarm": 1,
+	"UnreadAlarm": 18,
+	"TotalAlarm": 185,
+	"EndOfDurationLectures": [{
+		"LectureStudentId": 297,
+		"LectureId": 184,
+		"MemberId": 2074,
+		"IsApproved": true,
+		"CreateDate":"2018-07-05T20:19:11.22",
+		"ModifyDate":"2018-07-05T11:19:11.87",
+		"StartDate": null,
+		"EndDate":"2018-06-29T00:00:00",
+		"RecentDate":"0001-01-01T00:00:00",
+		"Title":"React JS의 이론 학습",
+		"Description":"<p>리액트의 기초를 배우는 강좌 입니다.전문가 영역으로 강좌 수강전 반드시 자신의 실력을 확인하고 수강하세요~ < /p>",
+		"OwnerMemberId": 2992,
+		"IsNewIcon": true,
+		"Tags":"데이터 베이스,mysql",
+		"RecommendCount": 0,
+		"ThumbnailUrl":"https:/ / modustorage.blob.core.windows.net / image / 950e e589 - 4 c0 - 4 bfc - b1cc - 69 a523322e1e___ReactJS.png",
+		"Price": 0.0,
+		"IsSale": false,
+		"SalePrice": 0.0,
+		"Lecturer":"테스트 채널장",
+		"Difficulty":"고급",
+		"TeachingMaterial":"자체강의 교재",
+		"Weeks": 0,
+		"SimpleDescription":"리액트의 기초를 배우는 강좌 입니다.",
+		"DurationDay": 0,
+		"Category": 2,
+		"State": 3,
+		"AlwaysOpen": 0,
+		"LessonCnt": 2,
+		"MemberLessonCnt": 0,
+		"TotalAVGLessonCnt": 1.0,
+		"LastLessonId": null,
+		"LessonModifyDate": null
+	}],
+	"InProgressLectures": [{
+		"LectureStudentId": 297,
+		"LectureId": 184,
+		"MemberId": 2074,
+		"IsApproved": true,
+		"CreateDate":"2018-07-05T20:19:11.22",
+		"ModifyDate":"2018-07-05T11:19:11.87",
+		"StartDate": null,
+		"EndDate":"2018-06-29T00:00:00",
+		"RecentDate":"0001-01-01T00:00:00",
+		"Title":"React JS의 이론 학습",
+		"Description":"<p>리액트의 기초를 배우는 강좌 입니다.전문가 영역으로 강좌 수강전 반드시 자신의 실력을 확인하고 수강하세요~ < /p>",
+		"OwnerMemberId": 2992,
+		"IsNewIcon": true,
+		"Tags":"데이터 베이스,mysql",
+		"RecommendCount": 0,
+		"ThumbnailUrl":"https:/ / modustorage.blob.core.windows.net / image / 950e e589 - 4 c0 - 4 bfc - b1cc - 69 a523322e1e___ReactJS.png",
+		"Price": 0.0,
+		"IsSale": false,
+		"SalePrice": 0.0,
+		"Lecturer":"테스트 채널장",
+		"Difficulty":"고급",
+		"TeachingMaterial":"자체강의 교재",
+		"Weeks": 0,
+		"SimpleDescription":"리액트의 기초를 배우는 강좌 입니다.",
+		"DurationDay": 0,
+		"Category": 2,
+		"State": 3,
+		"AlwaysOpen": 0,
+		"LessonCnt": 2,
+		"MemberLessonCnt": 0,
+		"TotalAVGLessonCnt": 1.0,
+		"LastLessonId": null,
+		"LessonModifyDate": null
+	}, {
+		"LectureStudentId": 297,
+		"LectureId": 184,
+		"MemberId": 2074,
+		"IsApproved": true,
+		"CreateDate":"2018-07-05T20:19:11.22",
+		"ModifyDate":"2018-07-05T11:19:11.87",
+		"StartDate": null,
+		"EndDate":"2018-06-29T00:00:00",
+		"RecentDate":"0001-01-01T00:00:00",
+		"Title":"React JS의 이론 학습",
+		"Description":"<p>리액트의 기초를 배우는 강좌 입니다.전문가 영역으로 강좌 수강전 반드시 자신의 실력을 확인하고 수강하세요~ < /p>",
+		"OwnerMemberId": 2992,
+		"IsNewIcon": true,
+		"Tags":"데이터 베이스,mysql",
+		"RecommendCount": 0,
+		"ThumbnailUrl":"https:/ / modustorage.blob.core.windows.net / image / 950e e589 - 4 c0 - 4 bfc - b1cc - 69 a523322e1e___ReactJS.png",
+		"Price": 0.0,
+		"IsSale": false,
+		"SalePrice": 0.0,
+		"Lecturer":"테스트 채널장",
+		"Difficulty":"고급",
+		"TeachingMaterial":"자체강의 교재",
+		"Weeks": 0,
+		"SimpleDescription":"리액트의 기초를 배우는 강좌 입니다.",
+		"DurationDay": 0,
+		"Category": 2,
+		"State": 3,
+		"AlwaysOpen": 0,
+		"LessonCnt": 2,
+		"MemberLessonCnt": 0,
+		"TotalAVGLessonCnt": 1.0,
+		"LastLessonId": null,
+		"LessonModifyDate": null
+	}],
+	"NotApprovedLectures": [],
+	"RecentLectures": [{
+		"LectureStudentId": 297,
+		"LectureId": 184,
+		"MemberId": 2074,
+		"IsApproved": true,
+		"CreateDate":"2018-07-05T20:19:11.22",
+		"ModifyDate":"2018-07-05T11:19:11.87",
+		"StartDate": null,
+		"EndDate":"2018-06-29T00:00:00",
+		"RecentDate":"0001-01-01T00:00:00",
+		"Title":"React JS의 이론 학습",
+		"Description":"<p>리액트의 기초를 배우는 강좌 입니다.전문가 영역으로 강좌 수강전 반드시 자신의 실력을 확인하고 수강하세요~ < /p>",
+		"OwnerMemberId": 2992,
+		"IsNewIcon": true,
+		"Tags":"데이터 베이스,mysql",
+		"RecommendCount": 0,
+		"ThumbnailUrl":"https:/ / modustorage.blob.core.windows.net / image / 950e e589 - 4 c0 - 4 bfc - b1cc - 69 a523322e1e___ReactJS.png",
+		"Price": 0.0,
+		"IsSale": false,
+		"SalePrice": 0.0,
+		"Lecturer":"테스트 채널장",
+		"Difficulty":"고급",
+		"TeachingMaterial":"자체강의 교재",
+		"Weeks": 0,
+		"SimpleDescription":"리액트의 기초를 배우는 강좌 입니다.",
+		"DurationDay": 0,
+		"Category": 2,
+		"State": 3,
+		"AlwaysOpen": 0,
+		"LessonCnt": 2,
+		"MemberLessonCnt": 0,
+		"TotalAVGLessonCnt": 1.0,
+		"LastLessonId": null,
+		"LessonModifyDate": null
+	}, {
+		"LectureStudentId": 297,
+		"LectureId": 184,
+		"MemberId": 2074,
+		"IsApproved": true,
+		"CreateDate":"2018-07-05T20:19:11.22",
+		"ModifyDate":"2018-07-05T11:19:11.87",
+		"StartDate": null,
+		"EndDate":"2018-06-29T00:00:00",
+		"RecentDate":"0001-01-01T00:00:00",
+		"Title":"React JS의 이론 학습",
+		"Description":"<p>리액트의 기초를 배우는 강좌 입니다.전문가 영역으로 강좌 수강전 반드시 자신의 실력을 확인하고 수강하세요~ < /p>",
+		"OwnerMemberId": 2992,
+		"IsNewIcon": true,
+		"Tags":"데이터 베이스,mysql",
+		"RecommendCount": 0,
+		"ThumbnailUrl":"https:/ / modustorage.blob.core.windows.net / image / 950e e589 - 4 c0 - 4 bfc - b1cc - 69 a523322e1e___ReactJS.png",
+		"Price": 0.0,
+		"IsSale": false,
+		"SalePrice": 0.0,
+		"Lecturer":"테스트 채널장",
+		"Difficulty":"고급",
+		"TeachingMaterial":"자체강의 교재",
+		"Weeks": 0,
+		"SimpleDescription":"리액트의 기초를 배우는 강좌 입니다.",
+		"DurationDay": 0,
+		"Category": 2,
+		"State": 3,
+		"AlwaysOpen": 0,
+		"LessonCnt": 2,
+		"MemberLessonCnt": 0,
+		"TotalAVGLessonCnt": 1.0,
+		"LastLessonId": null,
+		"LessonModifyDate": null
+	}]
+};
 
 function recentLecturesTemplate(item){
 	let leftDay = "--";
@@ -71,16 +261,16 @@ function recentLecturesTemplate(item){
 		// dayCalculate = endDate.Subtract(DateTime.Now);
 		// if (dayCalculate < DateTime.Now.TimeOfDay)
 		// {
-		// 	leftDay = "--";
+		// 	leftDay ="--";
 		// }
 		// else
 		// {
-		// 	leftDay = DateTime.Now.Subtract(endDate).ToString("dd") + " 일";
+		// 	leftDay = DateTime.Now.Subtract(endDate).ToString("dd") +" 일";
 		// }
 	}
 
 	return `<tr>
-	<td>${item.CreateDate}</td>
+	<td>${new Date(item.CreateDate).yyyymmdd()}</td>
 	${item.Category === 3 ?
 		`<td><a href="/live/@item.LectureId">${item.Title}</a></td>` :
 		`<td><a href="/Vod/@item.LectureId">${item.Title}</a></td>`
@@ -102,7 +292,7 @@ function recentLecturesTemplate(item){
 		</div>
 		<div class="label"><span class="t-black">${Math.floor(item.TotalAVGLessonCnt)}</span> / ${item.LessonCnt}</div>
 	</td>
-	${leftDay === "--" ?
+	${leftDay ==="--" ?
 		`<td>기한 만료</td><td>-</td>` :
 		`<td class="count_down">${leftDay}</td>`
 	}
@@ -119,12 +309,63 @@ function recentLecturesTemplate(item){
 	</tr>`;
  }
 
- let tbodyRecentLectures = getElem('tbodyRecentLectures');
- tbodyRecentLectures.innerHTML = recentLecturesTemplate({Category:3,
-		AlwaysOpen:1,
-		Title:'그냥 과목과목',
-		MemberLessonCnt:10,
-		LessonCnt:20,
-		AverageProgress:50,
-		TotalAVGLessonCnt:10,
-		CreateDate:new Date()});
+ function renderData(data)
+{
+	let txtInProgressLecturesCount = getElem("txtInProgressLecturesCount");
+	let txtEndOfDurationLecturesCount = getElem("txtEndOfDurationLecturesCount");
+	let txtNotApprovedLecturesCount = getElem("txtNotApprovedLecturesCount");
+
+	let progressBar = getElem("progressBar");
+	let txtProgressVal = getElem("txtProgressVal");
+
+	let txtWholeLessonCount = getElem("txtWholeLessonCount");
+	let txtEndOfDurationLecturesCount2 = getElem("txtEndOfDurationLecturesCount2");
+
+	let txtNewAlarmCount = getElem("txtNewAlarmCount");
+	let txtUnreadAlarmCount = getElem("txtUnreadAlarmCount");
+	let txtTotalAlarmCount = getElem("txtTotalAlarmCount");
+
+	txtInProgressLecturesCount.innerHTML = data.InProgressLectures.length;
+	txtEndOfDurationLecturesCount.innerHTML = data.EndOfDurationLectures.length;
+	txtNotApprovedLecturesCount.innerHTML = data.NotApprovedLectures.length;
+
+	let wholeLesson = data.EndOfDurationLectures.length +
+	data.InProgressLectures.length;
+	let progressVal = Math.trunc((data.EndOfDurationLectures.length / wholeLesson) * 100);
+	let styleStr = `${progressVal > 50 ? "over50" : ""} p${progressVal}`;
+	progressBar.style.cssText = styleStr;
+	progressBar.dataset.progress = progressVal;
+	txtProgressVal.innerHTML = `${progressVal}%`;
+
+	txtWholeLessonCount.innerHTML = wholeLesson;
+	txtEndOfDurationLecturesCount2.innerHTML = data.EndOfDurationLectures.length;
+
+	txtNewAlarmCount.innerHTML = data.NewAlarm;
+	txtUnreadAlarmCount.innerHTML = data.UnreadAlarm;
+	txtTotalAlarmCount.innerHTML = data.TotalAlarm;
+
+	let templateString ="";
+
+	data.RecentLectures.forEach(function(item) {
+		templateString += recentLecturesTemplate(item);
+	});
+
+	let tbodyRecentLectures = getElem('tbodyRecentLectures');
+	tbodyRecentLectures.innerHTML = templateString;
+}
+
+sendPost('http://localhost:3000/login',
+	{"MemberId" : 1},
+	function (result) { //성공시
+		if (result.length > 0) {
+			renderData(result);
+		}
+		else {
+			//실패시 처리.
+		}
+	},
+	function () { //실패시
+
+});
+
+renderData(sampleData);

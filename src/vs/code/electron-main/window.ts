@@ -241,13 +241,15 @@ export class CodeWindow implements ICodeWindow {
 			//child.setFullScreen(true);
 			this._session = {};
 			loginWin.show();
+			//this._win.hide();
 		});
 
 		loginWin.on('closed', () => {
 			loginWin = null;
 
 			if(!this._session.userId ||
-				this._session.userId < 1){
+				this._session.userId < 1) {
+				this._win.show();
 				app.quit();
 			}
 		});
@@ -265,9 +267,11 @@ export class CodeWindow implements ICodeWindow {
 
 			this._controlWin = new BrowserWindow(controlWinOptions);
 			this._controlWin.webContents.toggleDevTools();
-			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard.html'));
+			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard2.html'));
 			this._controlWin.once('ready-to-show', () => {
 				this._controlWin.show();
+
+				this._controlWin.webContents.send('control-load-data', this._session.token);
 			});
 
 			this._controlWin.on('closed', () => {
@@ -278,11 +282,22 @@ export class CodeWindow implements ICodeWindow {
 		ipcMain.on('login-failed', () => {
 			loginWin.webContents.send('login-retry');
 		});
+
+		//vs code에서 파일 선택 변경시 이벤트 발생
 		ipcMain.on('editor-selectionchanged', (evt, args) => {
 			if(this._controlWin) {
 				this._controlWin.webContents.send('control-someaction-reply', args);
 			}
 		});
+
+		ipcMain.on('command-showexam', (evt, args) => {
+			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/examIndex.html'));
+			this._controlWin.webContents.send('control-exam-load', args);
+		});
+		//제어 윈도우에서 vs code를 열 때...
+		//this._win.show(); 이거를 실행해줘야 함.
+
+		//제어 윈도우 위치 조절
 		ipcMain.on('command-controlwindow-lefttop', () => {
 			if(this._controlWin) {
 				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
@@ -290,7 +305,6 @@ export class CodeWindow implements ICodeWindow {
 				this._controlWin.setPosition(bounds.x, bounds.y, true);
 			}
 		});
-
 		ipcMain.on('command-controlwindow-leftbottom', () => {
 			if(this._controlWin) {
 				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
@@ -301,7 +315,29 @@ export class CodeWindow implements ICodeWindow {
 				this._controlWin.setPosition(bounds.x, y, true);
 			}
 		});
+		ipcMain.on('command-controlwindow-righttop', () => {
+			if(this._controlWin) {
+				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
+				let bounds = this.getCurrentDisplayBounds();
 
+				let x = ((bounds.x + bounds.width) - this._controlWin.getSize()[0]);
+
+				this._controlWin.setPosition(x, bounds.y, true);
+			}
+		});
+		ipcMain.on('command-controlwindow-rightbottom', () => {
+			if(this._controlWin) {
+				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
+				let bounds = this.getCurrentDisplayBounds();
+
+				let x = ((bounds.x + bounds.width) - this._controlWin.getSize()[0]);
+				let y = ((bounds.y + bounds.height) - this._controlWin.getSize()[1]) - 45;
+
+				this._controlWin.setPosition(x, y, true);
+			}
+		});
+
+		//vs code 포커스 인 & 아웃 감지
 		this._win.on('blur', () => {
 			if(this._controlWin) {
 				if(this._controlWin.isFocused() === false) {
@@ -333,7 +369,7 @@ export class CodeWindow implements ICodeWindow {
 			}
 
 			if (!this._win.isVisible()) {
-				this._win.show(); // to reduce flicker from the default window size to maximize, we only show after maximize
+				// this._win.show(); // to reduce flicker from the default window size to maximize, we only show after maximize
 			}
 		}
 
@@ -502,7 +538,7 @@ export class CodeWindow implements ICodeWindow {
 				}
 
 				if (!this._win.isVisible()) { // maximize also makes visible
-					this._win.show();
+					//this._win.show();
 				}
 			}
 		});
@@ -688,9 +724,9 @@ export class CodeWindow implements ICodeWindow {
 		if (!this.environmentService.isBuilt && !this.environmentService.extensionTestsPath) {
 			this.showTimeoutHandle = setTimeout(() => {
 				if (this._win && !this._win.isVisible() && !this._win.isMinimized()) {
-					this._win.show();
-					this._win.focus();
-					this._win.webContents.openDevTools();
+					// this._win.show();
+					// this._win.focus();
+					// this._win.webContents.openDevTools();
 				}
 			}, 10000);
 		}
