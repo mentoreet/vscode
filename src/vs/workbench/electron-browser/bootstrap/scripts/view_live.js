@@ -1,4 +1,41 @@
 ﻿//....... 머해야하지.... 문제 선택시.... 아.....
+const electron = require('electron');
+const {app} = require('electron').remote;
+const path = require('path');
+const ipc = electron.ipcRenderer;
+//const { download } = require('electron-dl');
+//const admzip = require('adm-zip');
+const https = require('https');
+const fs = require('fs');
+const { exec } = require('child_process');
+
+const download = function(url, dest, cb) {
+    var file = fs.createWriteStream(dest);
+    /*var request =*/ https.get(url, function(response) {
+        response.pipe(file);
+        file.on('finish', function() {
+            file.close(cb);  // close() is async, call cb after close completes.
+        });
+    }).on('error', function(err) { // Handle errors
+        fs.unlink(dest); // Delete the file async. (But we don't check the result)
+        if (cb) cb(err.message);
+    });
+};
+
+function getFileNameFromUrl(url) {
+    //this removes the anchor at the end, if there is one
+    url = url.substring(0, (url.indexOf("#") == -1) ? url.length : url.indexOf("#"));
+    //this removes the query after the file name, if there is one
+    url = url.substring(0, (url.indexOf("?") == -1) ? url.length : url.indexOf("?"));
+    //this removes everything before the last slash in the path
+    url = url.substring(url.lastIndexOf("/") + 1, url.length);
+    //return
+    return url;
+}
+
+ipc.on("downloadExamSample-complete", () => {
+	alert('코딩 샘플 다운로드 완료!');
+});
 
 // Publish Javascript ----------------------------------------------------------------------------
 let leftTreeExit = document.getElementsByClassName("view_left_menu")[0].querySelector("ul li:last-of-type"),
@@ -8,10 +45,10 @@ let leftTreeExit = document.getElementsByClassName("view_left_menu")[0].querySel
     btnExit = document.getElementsByClassName("view_left_menu")[0].querySelector("ul li:last-of-type");
 leftTreeExit.onpointerenter = function () {
     this.querySelector(".balloon").classList.add("m_on");
-}
+};
 leftTreeExit.onpointerleave = function () {
     this.querySelector(".balloon").classList.remove("m_on");
-}
+};
 leftTreeExitA.onclick = function () {
     if (sideMenuList.classList.contains("open")) {
         sideMenuList.style.left = "50px";
@@ -22,16 +59,16 @@ leftTreeExitA.onclick = function () {
         sideMenuList.style.zIndex = 3;
         sideMenuList.classList.add("open");
     }
-}
+};
 sideMenuClicker.onclick = function () {
     sideMenuList.classList.add("open");
     sideMenuList.style.left = "-450px";
-}
+};
 btnExit.onclick = function () {
     if (!confirm("정말로 시험을 포기하시겠습니까?")) {
         fnCompleteExam("exit");
     }
-}
+};
 
 /**
  * JQuery .fadeIn, .fadeOut와 같은 방식으로 순수 자바스크립트화.
@@ -72,7 +109,7 @@ var AlertModal = function (text, type, time) {
         modal.style.right = "-500px";
     }, time);
     else setTimeout(function () { modal.style.right = "-500px"; }, 1500);
-}
+};
 // ---------------------------------------------------------------------------- Publish Javascript
 
 
@@ -94,7 +131,7 @@ window.onload = function () {
     startLimitTime.innerHTML = "";
     startStartDate.innerHTML = "";
     startEndDate.innerHTML = "";
-}
+};
 
 let btnStartExam = document.getElementById("getStart").querySelector(".start_btn button"),
     btnCodingInOut = document.getElementById("btnCodingInOut"),
@@ -106,11 +143,75 @@ let btnStartExam = document.getElementById("getStart").querySelector(".start_btn
 btnStartExam.onclick = function () {
     fnFadeInOut("getStart");
     AlertModal("지금부터 시험을 시작합니다.");
+
+    let directory = path.join(app.getPath('appData'),'moducoding','download');
+
+    let info = {
+        url:'https://modustorage.blob.core.windows.net/projects/201ef9b5-1cc2-468c-8a85-9659642c9be4.zip',
+        to:directory
+    };
+
+    // ipc.send('command-downloadExamSample', {
+    //     url:'https://modustorage.blob.core.windows.net/projects/201ef9b5-1cc2-468c-8a85-9659642c9be4.zip',
+    //     to:directory
+    // });
+//url, dest, cb
+//getFileNameFromUrl
+    let filename = getFileNameFromUrl(info.url);
+    let filepath = path.join(directory, filename);
+
+    download(info.url,
+        path.join(directory, filename),
+        () => {
+            let targetDir = path.join(directory, filename.replace(".zip", ""));
+
+            if(filename.indexOf('.zip') > 0) {
+                let cmd = `7z e "${filepath}" -o"${targetDir}" -aoa`;
+                alert(cmd);
+                //압축풀기
+                exec(`"C:\\Program Files\\7-Zip\\7z.exe" e "${filepath}" -o"${targetDir}" -aoa`, (error, stdout, stderr) => {
+                    if(error) {
+                        alert(error);
+                        return;
+                    }
+
+                    let temp = `"C:\\Program Files\\Unity\\Editor\\unity.exe" -projectPath "${targetDir}"`;
+                    // alert(temp);
+                    exec(temp);
+                });
+                //let zip1 = new admzip(filepath);
+                //zip1.extractAllTo(targetDir, true);
+            }
+            // alert('코딩 샘플 다운로드 완료!');
+
+        });
+
+    // download(app.getCurrentWindow(), info.url, {directory:directory})
+    //     .then(dl => {
+    //         let filepath = dl.getSavePath();
+    //         let filename = path.parse(filepath).base;
+
+    //         if(filename.indexOf('.zip') > 0) {
+    //             //압축풀기
+    //             let zip1 = new admzip(filepath);
+    //             zip1.extractAllTo(path.join(directory, filename), false);
+    //         }
+
+    //         //this._controlWin.webContents.send('downloadExamSample-complete', dl.getSavePath());
+    //         alert('코딩 샘플 다운로드 완료!');
+
+    //         //압축하기
+    //         // let zip = new admzip();
+    //         // zip.addLocalFolder(directory);
+    //         // zip.writeZip(path.join(directory, "files.zip"));
+    //     });
+
+
     startExamTimer(selectorTimer, 0.5, function () {
         // 시간이 지났을 때 이벤트
         fnCompleteExam("timeout");
     });
-}
+};
 
 let codingInOuts = document.getElementsByClassName("code_answer")[0];
 // 코딩 문제의 "입출력 예시 보기" 버튼 클릭시 이벤트
@@ -125,7 +226,7 @@ btnCodingInOut.onclick = function () {
         codingInOuts.innerHTML = codingInOuts.innerHTML + newTemplate;
     }
     console.log(codingInOuts);
-}
+};
 
 var fnTemplateEngine = function (html, options) {
     var re = /<%([^%>]+)?%>/g, reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g, code = 'var r=[];\n', cursor = 0, match;
@@ -133,7 +234,7 @@ var fnTemplateEngine = function (html, options) {
         js ? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
             (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
         return add;
-    }
+    };
     while (match = re.exec(html)) {
         add(html.slice(cursor, match.index))(match[1], true);
         cursor = match.index + match[0].length;
@@ -141,19 +242,19 @@ var fnTemplateEngine = function (html, options) {
     add(html.substr(cursor, html.length - cursor));
     code += 'return r.join("");';
     return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
-}
+};
 
 // 객관식 문제, "답안 제출" 버튼 클릭시 이벤트
 btnMultipleSubmit.onclick = function () {
-}
+};
 
 // 주관식 문제, "답안 제출" 버튼 클릭시 이벤트
 btnSubjectiveSubmit.onclick = function () {
-}
+};
 
 // 코딩 문제, "답안 제출" 버튼 클릭시 이벤트
 btnCodingSubmit.onclick = function () {
-}
+};
 
 var _selectedVM = null;
 
@@ -161,7 +262,7 @@ var fnFillQuestion = function (questionId) {
     // 공통 선택자
     let currentQuestionIndex = document.getElementsByClassName("currentQuestionIndex");
 
-    // 객관식 문제 선택자 
+    // 객관식 문제 선택자
     let multiTitle = document.getElementById("multiple_title"),
         multiScore = document.getElementById("multiple_score"),
         multiDesc = document.getElementById("multiple_description"),
@@ -181,7 +282,7 @@ var fnFillQuestion = function (questionId) {
 
 
 
-}
+};
 
 /**
  * 시험 시간 타이머
@@ -218,7 +319,7 @@ var startExamTimer = function ($element, duration, finishCallback) {
     }
     var timerId = setInterval(timerInterval, 100);
     return timerId;
-}
+};
 
 /**
  * 최종 제출 이벤트
@@ -256,4 +357,4 @@ var fnCompleteExam = function (type) {
         }
     });
     */
-}
+};

@@ -51,6 +51,8 @@ const excludedExtensions = [
 	'vscode-colorize-tests',
 	'ms-vscode.node-debug',
 	'ms-vscode.node-debug2',
+	'ms-vscode.csharp',
+	'ms-python.python'
 ];
 
 const vscodeEntryPoints = _.flatten([

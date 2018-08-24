@@ -8,5 +8,15 @@
 		"name": "ms-vscode.node-debug2",
 		"version": "1.26.5",
 		"repo": "https://github.com/Microsoft/vscode-node-debug2"
+	},
+	{
+		"name": "ms-vscode.csharp",
+		"version": "1.15.2",
+		"repo": "https://github.com/OmniSharp/omnisharp-vscode"
+	},
+	{
+		"name": "ms-python.python",
+		"version": "2018.7.1",
+		"repo": "https://github.com/Microsoft/vscode-python"
 	}
 ]

@@ -49,34 +49,34 @@ export abstract class AbstractUpdateService implements IUpdateService {
 		@IRequestService protected requestService: IRequestService,
 		@ILogService protected logService: ILogService,
 	) {
-		if (this.environmentService.disableUpdates) {
-			this.logService.info('update#ctor - updates are disabled');
-			return;
-		}
+		 if (this.environmentService.disableUpdates) {
+		// 	this.logService.info('update#ctor - updates are disabled');
+		// 	return;
+		 }
 
-		if (!product.updateUrl || !product.commit) {
-			this.logService.info('update#ctor - updates are disabled');
-			return;
-		}
+		// if (!product.updateUrl || !product.commit) {
+		// 	this.logService.info('update#ctor - updates are disabled');
+		// 	return;
+		// }
 
 		const quality = this.getProductQuality();
 
 		if (!quality) {
-			this.logService.info('update#ctor - updates are disabled');
-			return;
+		// 	this.logService.info('update#ctor - updates are disabled');
+		// 	return;
 		}
 
-		this.url = this.buildUpdateFeedUrl(quality);
-		if (!this.url) {
-			this.logService.info('update#ctor - updates are disabled');
-			return;
-		}
+		// this.url = this.buildUpdateFeedUrl(quality);
+		// if (!this.url) {
+		// 	this.logService.info('update#ctor - updates are disabled');
+		// 	return;
+		// }
 
-		this.setState(State.Idle(this.getUpdateType()));
+		// this.setState(State.Idle(this.getUpdateType()));
 
-		// Start checking for updates after 30 seconds
-		this.scheduleCheckForUpdates(30 * 1000)
-			.done(null, err => this.logService.error(err));
+		// // Start checking for updates after 30 seconds
+		// this.scheduleCheckForUpdates(30 * 1000)
+		// 	.done(null, err => this.logService.error(err));
 	}
 
 	private getProductQuality(): string {

@@ -52,7 +52,9 @@
     "vscode-textmate": "^4.0.1",
     "vscode-uri": "1.0.5",
     "vscode-xterm": "3.6.0-beta5",
-    "yauzl": "^2.9.1"
+    "yauzl": "^2.9.1",
+    "adm-zip": "^0.4.11",
+    "electron-dl": "^1.12.0"
   },
   "devDependencies": {
     "7zip": "0.0.6",
@@ -125,7 +127,9 @@
     "vinyl": "^0.4.5",
     "vinyl-fs": "^2.4.3",
     "vsce": "1.33.2",
-    "vscode-nls-dev": "3.0.7"
+    "vscode-nls-dev": "3.0.7",
+    "adm-zip": "^0.4.11",
+    "electron-dl": "^1.12.0"
   },
   "repository": {
     "type": "git",

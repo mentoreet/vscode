@@ -60,7 +60,9 @@ export const extraLanguages: Language[] = [
 const externalExtensionsWithTranslations = {
 	'vscode-chrome-debug': 'msjsdiag.debugger-for-chrome',
 	'vscode-node-debug': 'ms-vscode.node-debug',
-	'vscode-node-debug2': 'ms-vscode.node-debug2'
+	'vscode-node-debug2': 'ms-vscode.node-debug2',
+	'vscode-csharp' : 'ms-vscode.csharp',
+	'ms-python' : 'ms-python.python'
 };
 
 

@@ -21,6 +21,8 @@
 	"urlProtocol": "code-oss",
 	"extensionAllowedProposedApi": [
 		"ms-vscode.node-debug",
-		"ms-vscode.node-debug2"
+		"ms-vscode.node-debug2",
+		"ms-vscode.csharp",
+		"ms-python.python"
 	]
 }

@@ -297,6 +297,31 @@ export class CodeWindow implements ICodeWindow {
 		//제어 윈도우에서 vs code를 열 때...
 		//this._win.show(); 이거를 실행해줘야 함.
 
+		// let directory = '';
+
+		// ipcMain.on('command-downloadExamSample', (evt, info) => {
+
+		// 	directory = info.to;
+		// 	download(this._controlWin, info.url, {directory:directory})
+		// 		.then(dl => {
+		// 			let filepath = dl.getSavePath();
+		// 			let filename = path.parse(filepath).base;
+
+		// 			if(filename.indexOf('.zip') > 0) {
+		// 				//압축풀기
+		// 				let zip1 = new admzip(filepath);
+		// 				zip1.extractAllTo(path.join(directory, filename), false);
+		// 			}
+
+		// 			this._controlWin.webContents.send('downloadExamSample-complete', dl.getSavePath());
+
+		// 			//압축하기
+		// 			// let zip = new admzip();
+		// 			// zip.addLocalFolder(directory);
+		// 			// zip.writeZip(path.join(directory, "files.zip"));
+		// 		});
+		// })
+
 		//제어 윈도우 위치 조절
 		ipcMain.on('command-controlwindow-lefttop', () => {
 			if(this._controlWin) {
