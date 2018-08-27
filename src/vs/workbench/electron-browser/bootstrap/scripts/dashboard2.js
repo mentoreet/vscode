@@ -91,7 +91,7 @@ function examListTemplate(item){
 		<td>${item.alwaysOpen ? '수강 기간 내' : `${item.startDate}-${item.endDate}`}<td>
 		<td>${item.score}<td>
 		<td>${item.applyState}<td>
-		<td><input id="btnShow${item.lessonId}" type="button" class="" onclick="showExam(${item.lessonId});" value="시험 응시하기" /><td>
+		<td><input id="btnShow${item.lessonId}" type="button" class="" onclick="showExam(${item.lectureId},${item.lessonId});" value="시험 응시하기" /><td>
 	</tr>`;
  }
 
@@ -107,6 +107,6 @@ function examListTemplate(item){
 	tbodyExamList.innerHTML = templateString;
 }
 
-function showExam(id) {
-	ipc.send('command-showexam', id);
+function showExam(lectureId, lessonId) {
+	ipc.send('command-showexam', {lectureId : lectureId, lessonId: lessonId});
 }

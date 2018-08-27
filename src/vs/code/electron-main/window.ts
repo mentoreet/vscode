@@ -292,8 +292,17 @@ export class CodeWindow implements ICodeWindow {
 
 		ipcMain.on('command-showexam', (evt, args) => {
 			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/examIndex.html'));
-			this._controlWin.webContents.send('control-exam-load', args);
+			this._controlWin.webContents.send('control-exam-load', {lectureId : args.lectureId, lessonId : args.lessonId, token : this._session.token});
 		});
+		ipcMain.on('command-back-to-dashboard', () => {
+			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard2.html'));
+			let _controlWin = this._controlWin;
+			let _session = this._session;
+			this._controlWin.webContents.on('did-finish-load', function() {
+				_controlWin.webContents.send('control-load-data', _session.token);
+			});
+		});
+
 		//제어 윈도우에서 vs code를 열 때...
 		//this._win.show(); 이거를 실행해줘야 함.
 

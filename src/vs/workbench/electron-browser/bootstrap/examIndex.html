@@ -8,7 +8,14 @@
     <link href="styles/semantic.min.css" rel="stylesheet" />
     <link href="styles/sub.css" rel="stylesheet" />
 </head>
+
 <body>
+    <div id="loaderBox" class="loaderBox" style="display: none;">
+        <div class="cover_box">
+            <div class="ui active large text loader">잠시만 기다려 주세요.</div>
+            <div class="bg"></div>
+        </div>
+    </div>
     <!-- 시험 응시전 / 후 관계없이 공통 -->
     <div class="view_top">
         <div class="logo_title">
@@ -28,7 +35,7 @@
                         <span class="txt">제출 현황 : </span>
                         <span class="dev" id="submittedQuestionCnt">0</span>
                         <span class="txt"> / </span>
-                        <span class="dev totalQuestionCnt">0</span>
+                        <span class="dev totalQuestionIndex">0</span>
                         <span class="txt"> 문제</span>
                     </li>
                 </ul>
@@ -49,24 +56,12 @@
             </li>
         </ul>
     </div>
-    <div id="side_menu_cont" class="open">
+    <div id="side_menu_cont" class="open" style="z-index:2;">
         <div>
             <a href="javascript:;"><i class="icon close"></i></a>
             <div class="exam_list">
                 <p class="tit">문제목록</p>
-                <ul>
-                    <li class="toss">
-                        <span class="number">1.</span>
-                        <span class="exam_tit">문제입니다문제입니다문제입니다제입니다 (<b>10</b> 점)</span>
-                        <span class="exam_type multi">객관식</span>
-                        <span class="status">제출</span>
-                    </li>
-                    <li class="">
-                        <span class="number">2.</span>
-                        <span class="exam_tit">문제입니다문제입니다문제입니다 (<b>10</b> 점)</span>
-                        <span class="exam_type multi">객관식</span>
-                        <span class="status">미제출</span>
-                    </li>
+                <ul id="sideMenuList">
                 </ul>
             </div>
         </div>
@@ -76,7 +71,7 @@
         <div class="content_box">
             <img src="images/exam_apply_bg.jpg" />
             <div>
-                <p>총 <span class="totalQuestionCnt">0</span> 문항</p>
+                <p>총 <span class="totalQuestionIndex">0</span> 문항</p>
                 <p><span>100</span> 점 만점</p>
                 <p><span id="startLimitTime">0</span> 분</p>
             </div>
@@ -100,19 +95,12 @@
         <div class="exam_page content">
             <div class="btn_box">
                 <div class="select">
-                    <div class="ui selection dropdown small" id="semantic_select">
-                        <input type="hidden" name="gender" />
-                        <i class="dropdown icon"></i>
-                        <div class="default text">문제 목록</div>
-                        <div class="menu">
-                            <div class="item" data-value="0">문제 1 <span><i class="icon check"></i></span></div>
-                            <div class="item" data-value="1">문제 2</div>
-                        </div>
-                    </div>
+                    <select id="topSelect">
+                    </select>
                 </div>
                 <div class="btns">
-                    <button id="btnPrev"><i class="icon angle left"></i> 이전</button>
-                    <button id="btnNext">다음 <i class="icon angle right"></i></button>
+                    <button id="btnPrev" onclick="javascript: fnChangeVM('prev');"><i class="icon angle left"></i> 이전</button>
+                    <button id="btnNext" onclick="javascript: fnChangeVM('next');">다음 <i class="icon angle right"></i></button>
                 </div>
             </div>
             <div id="question_types">
@@ -128,25 +116,25 @@
                     </p>
                     <div class="choices">
                         <div class="ui radio checkbox">
-                            <input type="radio" name="radio" id="choice01">
+                            <input type="radio" name="radio" id="choice01" data-value="1">
                             <label for="choice01">보기 1</label>
                             <p class="explain" id="multiple1">1</p>
                         </div>
                         <br />
                         <div class="ui radio checkbox">
-                            <input type="radio" name="radio" id="choice02">
+                            <input type="radio" name="radio" id="choice02" data-value="2">
                             <label for="choice02">보기 2</label>
                             <p class="explain" id="multiple2">2</p>
                         </div>
                         <br />
                         <div class="ui radio checkbox">
-                            <input type="radio" name="radio" id="choice03">
+                            <input type="radio" name="radio" id="choice03" data-value="3">
                             <label for="choice03">보기 3</label>
                             <p class="explain" id="multiple3">3</p>
                         </div>
                         <br />
                         <div class="ui radio checkbox">
-                            <input type="radio" name="radio" id="choice04">
+                            <input type="radio" name="radio" id="choice04" data-value="4">
                             <label for="choice04">보기 4</label>
                             <p class="explain" id="multiple4">4</p>
                         </div>
@@ -180,14 +168,14 @@
                         <img src="images/cidungImg-mini.jpg" />
                         <span class="q_count currentQuestionIndex">1</span>.
                         <span class="q_tit" id="coding_title">문제제목입니다.문제제목입니다.</span>
-                        <span class="q_point" id="coding_score">(<b>10</b>점)</span>
+                        <span class="q_point">(<b id="coding_score">10</b>점)</span>
                     </p>
                     <div class="example_btn">
                         <button id="btnCodingInOut">입출력 예시 보기</button>
                     </div>
                     <p class="q_desc" id="coding_description">
                     </p>
-                    <div class="code_answer">
+                    <div class="code_answer" id="codingInOut">
                         <p class="tit">입력</p>
                         <div class="input_box">
                             <p class="input_cont" id="coding_input"></p>
@@ -208,14 +196,6 @@
         <p id="saveModalText"></p>
     </div>
 
-    <template id="menuTemplate">
-        <li class="toss">
-            <span class="number">1.</span>
-            <span class="exam_tit">문제입니다문제입니다문제입니다제입니다 (<b>10</b> 점)</span>
-            <span class="exam_type multi">객관식</span>
-            <span class="status">제출</span>
-        </li>
-    </template>
     <script src="scripts/commonLib.js" type="text/javascript" charset="utf-8"></script>
     <script src="scripts/view_live.js" type="text/javascript" charset="utf-8"></script>
 </body>
