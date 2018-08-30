@@ -62,7 +62,8 @@ const externalExtensionsWithTranslations = {
 	'vscode-node-debug': 'ms-vscode.node-debug',
 	'vscode-node-debug2': 'ms-vscode.node-debug2',
 	'vscode-csharp' : 'ms-vscode.csharp',
-	'ms-python' : 'ms-python.python'
+	'ms-python' : 'ms-python.python',
+	'vscode-cpptools' : 'ms-vscode.cpptools'
 };
 
 

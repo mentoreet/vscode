@@ -52,7 +52,8 @@ const excludedExtensions = [
 	'ms-vscode.node-debug',
 	'ms-vscode.node-debug2',
 	'ms-vscode.csharp',
-	'ms-python.python'
+	'ms-python.python',
+	'ms-vscode.cpptools'
 ];
 
 const vscodeEntryPoints = _.flatten([

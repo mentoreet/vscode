@@ -7,6 +7,8 @@
     <link href="styles/view_live.css" rel="stylesheet">
     <link href="styles/semantic.min.css" rel="stylesheet" />
     <link href="styles/sub.css" rel="stylesheet" />
+    <link href="styles/jquery-ui.css" rel="stylesheet" />
+    <link href="styles/normalize.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -61,12 +63,11 @@
             <a href="javascript:;"><i class="icon close"></i></a>
             <div class="exam_list">
                 <p class="tit">문제목록</p>
-                <ul id="sideMenuList">
-                </ul>
+                <ul id="sideMenuList"></ul>
             </div>
         </div>
     </div>
-    <!-- 시험 응시전에 나오는 페이지 -->
+    <!-- 시험 응시전에 나오는 페이지
     <div id="getStart">
         <div class="content_box">
             <img src="images/exam_apply_bg.jpg" />
@@ -89,14 +90,55 @@
                 <button id="btnExamStart">시험 응시하기</button>
             </div>
         </div>
+    </div>-->
+    <!-- 시험 응시전에 나오는 페이지 -->
+    <div id="getStart">
+        <div class="content_box">
+            <div class="exam_list_box">
+                <p class="tit">시험 목록</p>
+                <div class="exam_list_cov">
+                    <ul id="appendExamList">
+                    </ul>
+                </div>
+            </div>
+            <div class="exam_detail_box">
+                <img src="images/exam_apply_bg.jpg" />
+                <p class="exam_tit"><span id="detailTit">시험제목입니다.</span></p>
+                <div class="exam_cnt">
+                    <p class="total_que">총 <span id="detailTotalCnt">0</span> 문항</p>
+                    <p class="total_score"><span>100<b style="color:#333; font-weight:400;"> 점 만점</b></span></p>
+                    <p class="total_time"><span id="detailLimitTime">120</span> 분</p>
+                </div>
+                <p class="time" id="existTime">
+                    시험기간 :
+                    <span id="detailStartDate">2018.07.10 </span>
+                    <!--<span> <i class="icon clock"></i> 00:00</span>-->
+                    <span> ~ </span>
+                    <span id="detailEndDate">2018.08.10 </span>
+                    <!--<span> <i class="icon clock"></i> 24:00</span>-->
+                </p>
+                <p class="time" id="noExistTime">
+                    시험기간 : <span>항상 공개</span>
+                </p>
+
+                <div class="desc" id="detailDesc">
+                </div>
+            </div>
+        </div>
+        <div class="start_btn">
+            <button>시험 응시하기</button>
+        </div>
     </div>
+
+
+
+
     <!-- 시험 응시완료되고 나오는 페이지 -->
     <div id="exam_left" style="position: absolute; left: 50px; top:50px; width: calc(100% - 50px); height: calc(100% - 50px);">
         <div class="exam_page content">
             <div class="btn_box">
                 <div class="select">
-                    <select id="topSelect">
-                    </select>
+                    <select id="topSelect"></select>
                 </div>
                 <div class="btns">
                     <button id="btnPrev" onclick="javascript: fnChangeVM('prev');"><i class="icon angle left"></i> 이전</button>
@@ -196,6 +238,27 @@
         <p id="saveModalText"></p>
     </div>
 
+    <!-- remotecontroller
+    <div id="remote_on">
+        <a href="javascript:;">리모컨 ON</a>
+    </div>
+    <div id="remote">
+        <div class="border_box">
+            <div id="remoteheader">
+                <p>리모컨</p>
+                <div class="remote_inner">
+                    <ul>
+                        <li><a href="javascript:;"><img src="images/remote_arr01.jpg" /></a></li>
+                        <li><a href="javascript:;"><img src="images/remote_arr02.jpg" /></a></li>
+                        <li><a href="javascript:;"><img src="images/remote_arr03.jpg" /></a></li>
+                        <li><a href="javascript:;"><img src="images/remote_arr04.jpg" /></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    remotecontroller
+    -->
     <script src="scripts/commonLib.js" type="text/javascript" charset="utf-8"></script>
     <script src="scripts/view_live.js" type="text/javascript" charset="utf-8"></script>
 </body>

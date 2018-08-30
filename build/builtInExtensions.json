@@ -18,5 +18,10 @@
 		"name": "ms-python.python",
 		"version": "2018.7.1",
 		"repo": "https://github.com/Microsoft/vscode-python"
+	},
+	{
+		"name": "ms-vscode.cpptools",
+		"version": "0.18.1",
+		"repo": "https://github.com/Microsoft/vscode-cpptools"
 	}
 ]

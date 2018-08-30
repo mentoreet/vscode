@@ -63,9 +63,9 @@ function sendPost(url, jsonData, success, fail) {
 	})
 	.then(res => success(res))
 	.catch(error => {
+		console.log(error);
 		fail();
 	});
-  	// .then(res => console.log(res));
 }
 
 function sendPostWithToken(url, token, jsonData, success, fail) {
@@ -76,7 +76,7 @@ function sendPostWithToken(url, token, jsonData, success, fail) {
 			'Accept': 'application/json, text/plain, */*',
 			'Content-Type': 'application/json'
 		},
-  		body: JSON.stringify(jsonData)
+		body: JSON.stringify(jsonData)
 	})
 	.then(res => {
 		if(!res.ok){
@@ -87,7 +87,7 @@ function sendPostWithToken(url, token, jsonData, success, fail) {
 	})
 	.then(res => success(res))
 	.catch(error => {
+		console.log(error);
 		fail();
 	});
-  	// .then(res => console.log(res));
 }

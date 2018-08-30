@@ -211,6 +211,25 @@ export class WindowsManager implements IWindowsMainService {
 			}
 		});
 
+		ipc.on('command-openfiles', (evt, files) => {
+			console.log('파일을 열어 보자아!!!');
+			this._openPaths = files; //['D:/test', 'D:/test/test.py'];
+
+			let openUris : URI[] = [];
+
+			this._openPaths.forEach(path => {
+				openUris.push(URI.file(path));
+			});
+
+			this.open({
+				context: OpenContext.DESKTOP,
+				cli: this.environmentService.args,
+				urisToOpen: openUris,// [URI.file('D:/test'), URI.file('D:/test/test.py')],
+				forceNewWindow: false,
+				forceOpenWorkspaceAsFile: false// options.dialogOptions && !equals(options.dialogOptions.filters, WORKSPACE_FILTER)
+			});
+		});
+
 		ipc.on('control-someaction', () => {
 			this._openPaths = ['D:/test', 'D:/test/test.py'];
 

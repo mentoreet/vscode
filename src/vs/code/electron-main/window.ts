@@ -142,6 +142,7 @@ export class CodeWindow implements ICodeWindow {
 			minHeight: CodeWindow.MIN_HEIGHT,
 			show: !isFullscreenOrMaximized,
 			title: product.nameLong,
+			fullscreen: true,
 			webPreferences: {
 				'backgroundThrottling': false, // by default if Code is in the background, intervals and timeouts get throttled,
 				disableBlinkFeatures: 'Auxclick' // disable auxclick events (see https://developers.google.com/web/updates/2016/10/auxclick)
@@ -204,6 +205,7 @@ export class CodeWindow implements ICodeWindow {
 			height: this.windowState.height,
 			x: this.windowState.x,
 			y: this.windowState.y,
+			fullscreen: true,
 			// width: 800,
 			// height: 600,
 			// x: this.windowState.x,
@@ -267,11 +269,14 @@ export class CodeWindow implements ICodeWindow {
 
 			this._controlWin = new BrowserWindow(controlWinOptions);
 			this._controlWin.webContents.toggleDevTools();
-			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard2.html'));
+			// this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard2.html'));
+			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/examIndex.html'));
 			this._controlWin.once('ready-to-show', () => {
 				this._controlWin.show();
+				this._controlWin.maximize();
 
-				this._controlWin.webContents.send('control-load-data', this._session.token);
+				//this._controlWin.webContents.send('control-load-data', this._session.token);
+				this._controlWin.webContents.send('control-exam-load', {token : this._session.token});
 			});
 
 			this._controlWin.on('closed', () => {
@@ -290,16 +295,18 @@ export class CodeWindow implements ICodeWindow {
 			}
 		});
 
-		ipcMain.on('command-showexam', (evt, args) => {
-			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/examIndex.html'));
-			this._controlWin.webContents.send('control-exam-load', {lectureId : args.lectureId, lessonId : args.lessonId, token : this._session.token});
-		});
+		// ipcMain.on('command-showexam', (evt, args) => {
+		// 	this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/examIndex.html'));
+		// 	this._controlWin.webContents.send('control-exam-load', {lectureId : args.lectureId, lessonId : args.lessonId, token : this._session.token});
+		// });
 		ipcMain.on('command-back-to-dashboard', () => {
-			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard2.html'));
+			//this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/dashboard2.html'));
+			this._controlWin.loadURL(require.toUrl('vs/workbench/electron-browser/bootstrap/examIndex.html'));
 			let _controlWin = this._controlWin;
 			let _session = this._session;
 			this._controlWin.webContents.on('did-finish-load', function() {
-				_controlWin.webContents.send('control-load-data', _session.token);
+				//_controlWin.webContents.send('control-load-data', _session.token);
+				_controlWin.webContents.send('control-exam-load', {token : _session.token});
 			});
 		});
 
