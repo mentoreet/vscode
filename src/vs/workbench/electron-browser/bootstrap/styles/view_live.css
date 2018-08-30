@@ -1,4 +1,4 @@
-html, body {height: 100%; position:relative;}
+html, body {height: 100%; position:relative; width:100%; min-width:480px !important;}
 body {padding: 50px 0 0 50px; background: #dfdfdf; box-sizing: border-box;}
 .split {-webkit-box-sizing: border-box; -moz-box-sizing: border-box;box-sizing: border-box;overflow-y: auto;overflow-x: hidden;}
 .content {border: 1px solid #dfdfdf; background: #fff;}
@@ -6,18 +6,7 @@ body {padding: 50px 0 0 50px; background: #dfdfdf; box-sizing: border-box;}
 .gutter.gutter-horizontal {cursor: col-resize;background-image: url('../grips/vertical.png');}
 .gutter.gutter-vertical {cursor: row-resize;background-image: url('../grips/horizontal.png');}
 .split.split-horizontal, .gutter.gutter-horizontal {height: 100%;float: left;}
-#exam_left {width:100%; height:100%; overflow:auto;}
-#question_types .submit_btn button{cursor:pointer;}
-div#alertModal {position:fixed; top:100px; right:-500px;  border-radius: 4px; background: #2eaef8;  box-sizing: border-box; z-index:9999; display:block; text-align:center; transition:all 0.4s; padding:10px 50px;}
-div#alertModal p {font-size:14px; color:#fff; font-weight: 400; line-height:22px; text-align:center;}
-
-/* 페이지 로딩 */
-.loaderBox { position: fixed; width: 100%; height:100%; z-index: 9000; } 
-#loaderBox {background:rgba(255,255,255,0.8)}
-#loaderBox > div.cover_box {width:350px; height:200px; background:#fff; border-radius: 4px; box-sizing:border-box; box-shadow:1px 1px 0px #c8c8c8; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); -webkit-transform:translate(-50%, -50%); -moz-transform:translate(-50%, -50%); -ms-transform:translate(-50%, -50%); -o-transform:translate(-50%, -50%); z-index:99}
-.loaderBox .bg { position: absolute; width: 100%; height: 100%;  background-color:rgba(255,255,255,.55); } 
-.loaderBox .loader { position: absolute !important; color: #000; font-weight: 400; } 
-
+#exam_left {width:calc(100% - 50px); overflow:auto; position:relative; top:50px; left:50px; height: calc(100% - 50px);}
 
 /*remote_controller*/
 #remote {width:165px; height:194px; position:fixed; top:0; left:0; z-index:999;}
@@ -31,63 +20,63 @@ div#alertModal p {font-size:14px; color:#fff; font-weight: 400; line-height:22px
 #remote .remote_inner ul li img {width:100%;}
 
 @font-face {
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 100;
-  src: 
-  url(font/NotoSans-Thin.woff2) format('woff2'), 
-  url(font/NotoSans-Thin.woff) format('woff'), 
-  url(font/NotoSans-Thin.otf) format('opentype');
-}
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 100;
+	src:
+	url(../fonts/NotoSans-Thin.woff2) format('woff2'),
+	url(../fonts/NotoSans-Thin.woff) format('woff'),
+	url(../fonts/NotoSans-Thin.otf) format('opentype');
+  }
 
-@font-face {
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 300;
-  src: 
-  url(font/NotoSans-Light.woff2) format('woff2'), 
-  url(font/NotoSans-Light.woff) format('woff'), 
-  url(font/NotoSans-Light.otf) format('opentype');
-}
+  @font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 300;
+	src:
+	url(../fonts/NotoSans-Light.woff2) format('woff2'),
+	url(../fonts/NotoSans-Light.woff) format('woff'),
+	url(../fonts/NotoSans-Light.otf) format('opentype');
+  }
 
-@font-face {
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 400;
-  src: 
-  url(font/NotoSans-Regular.woff2) format('woff2'), 
-  url(font/NotoSans-Regular.woff) format('woff'), 
-  url(font/NotoSans-Regular.otf) format('opentype');
-}
+  @font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 400;
+	src:
+	url(../fonts/NotoSans-Regular.woff2) format('woff2'),
+	url(../fonts/NotoSans-Regular.woff) format('woff'),
+	url(../fonts/NotoSans-Regular.otf) format('opentype');
+  }
 
-@font-face {
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 500;
-  src: url(font/NotoSans-Medium.woff2) format('woff2'), 
-  url(font/NotoSans-Medium.woff) format('woff'), 
-  url(font/NotoSans-Medium.otf) format('opentype');
-}
+  @font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 500;
+	src: url(../fonts/NotoSans-Medium.woff2) format('woff2'),
+	url(../fonts/NotoSans-Medium.woff) format('woff'),
+	url(../fonts/NotoSans-Medium.otf) format('opentype');
+  }
 
-@font-face {
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 700;
-  src: 
-  url(font/NotoSans-Bold.woff2) format('woff2'), 
-  url(font/NotoSans-Bold.woff) format('woff'),
-  url(font/NotoSans-Bold.otf) format('opentype');
-}
+  @font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 700;
+	src:
+	url(../fonts/NotoSans-Bold.woff2) format('woff2'),
+	url(../fonts/NotoSans-Bold.woff) format('woff'),
+	url(../fonts/NotoSans-Bold.otf) format('opentype');
+  }
 
-@font-face {
-  font-family: 'Noto Sans KR';
-  font-style: normal;
-  font-weight: 900;
-  src: 
-  url(font/NotoSans-Black.woff2) format('woff2'), 
-  url(font/NotoSans-Black.woff) format('woff'), 
-  url(font/NotoSans-Black.otf) format('opentype');
-}
+  @font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 900;
+	src:
+	url(../fonts/NotoSans-Black.woff2) format('woff2'),
+	url(../fonts/NotoSans-Black.woff) format('woff'),
+	url(../fonts/NotoSans-Black.otf) format('opentype');
+  }
 
 
 /* 모두의코딩 전용 reset */

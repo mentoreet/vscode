@@ -7,8 +7,6 @@
     <link href="styles/view_live.css" rel="stylesheet">
     <link href="styles/semantic.min.css" rel="stylesheet" />
     <link href="styles/sub.css" rel="stylesheet" />
-    <link href="styles/jquery-ui.css" rel="stylesheet" />
-    <link href="styles/normalize.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -23,9 +21,9 @@
         <div class="logo_title">
             <div class="logo_box">
                 <span><img src="images/idp_channel_default.png" /></span>
-                <p id="txtExamTitle">시험 제목</p>
+                <p id="txtExamTitle"></p>
             </div>
-            <div class="mid_tit">
+            <div class="mid_tit" id="topInfo" style="display: none;">
                 <ul>
                     <li>
                         <img src="images/time_img.png" />
@@ -43,8 +41,16 @@
                 </ul>
             </div>
             <div class="finish_all_btn">
-                <button id="btnExamFinish" class="finish_all"><i class="icon check"></i> 최종완료</button>
+                <button id="btnExamFinish" class="finish_all" style="display:none;"><i class="icon check"></i> 최종완료</button>
             </div>
+            <div class="control_pannel">
+                <button id="btnMinimize" class="minimize"><img src="images/control_btn01.png" alt="최소화" /></button>
+                <button id="btnMaximize" class="maximize"><img src="images/control_btn02.png" alt="전체화면" /></button>
+                <button id="btnDocking" class="one_third"><img src="images/control_btn03.png" alt="우측도킹" /></button>
+            </div>
+            <span class="cloud minimize">최소화</span>
+            <span class="cloud maxmize">전체화면</span>
+            <span class="cloud one_third">우측도킹</span>
         </div>
     </div>
     <div class="view_left_menu">
@@ -67,38 +73,13 @@
             </div>
         </div>
     </div>
-    <!-- 시험 응시전에 나오는 페이지
-    <div id="getStart">
-        <div class="content_box">
-            <img src="images/exam_apply_bg.jpg" />
-            <div>
-                <p>총 <span class="totalQuestionIndex">0</span> 문항</p>
-                <p><span>100</span> 점 만점</p>
-                <p><span id="startLimitTime">0</span> 분</p>
-            </div>
-            <p class="time">
-                시험기간 :
-                <span id="startStartDate">2018.07.10 </span>
-                <span> <i class="icon clock"></i> 00:00</span>
-                <span> ~ </span>
-                <span id="startEndDate">2018.08.10 </span>
-                <span> <i class="icon clock"></i> 00:00</span>
-            </p>
-            <p class="desc">
-            </p>
-            <div class="start_btn">
-                <button id="btnExamStart">시험 응시하기</button>
-            </div>
-        </div>
-    </div>-->
-    <!-- 시험 응시전에 나오는 페이지 -->
+
     <div id="getStart">
         <div class="content_box">
             <div class="exam_list_box">
                 <p class="tit">시험 목록</p>
                 <div class="exam_list_cov">
-                    <ul id="appendExamList">
-                    </ul>
+                    <ul id="appendExamList"></ul>
                 </div>
             </div>
             <div class="exam_detail_box">
@@ -129,9 +110,6 @@
             <button>시험 응시하기</button>
         </div>
     </div>
-
-
-
 
     <!-- 시험 응시완료되고 나오는 페이지 -->
     <div id="exam_left" style="position: absolute; left: 50px; top:50px; width: calc(100% - 50px); height: calc(100% - 50px);">
@@ -234,6 +212,31 @@
             </div>
         </div>
     </div>
+
+    <script id="coding-inout-template" type="text/template">
+        <div class="form">
+            <div class="ui fluid input" style="margin-bottom:10px;">
+                <h4 style="line-height:38px; margin-right:10px; display:inline-block; vertical-align:middle;">입력</h4>
+                <input type="text" placeholder="입력값 예시" value="<% this.input %>" readonly>
+            </div>
+        </div>
+        <div class="form">
+            <div class="ui fluid input" style="margin-bottom:10px;">
+                <h4 style="line-height:38px; margin-right:10px; display:inline-block; vertical-align:middle;">출력</h4>
+                <input type="text" placeholder="출력값 예시" value="<% this.output %>" readonly>
+            </div>
+        </div>
+    </script>
+
+    <div id="inputModal" class="ui tiny modal" style="top: 150px;">
+        <div class="header">입/출력 예시<span class="subTitle t-red">※ 입출력 형식을 잘 지켜주세요.</span></div>
+        <div class="scrolling content modu-text" id="codingInOutBody">
+        </div>
+        <div class="actions" style="padding:10px 20px;">
+            <button onclick="javascript: document.getElementById('inputModal').style.display = 'none';" style="background :#333; color:#fff; border: 1px solid #333; border-radius:4px; box-sizing:border-box; padding: 0 15px; text-align:center; line-height:35px;">확인</button>
+        </div>
+    </div>
+
     <div id="alertModal">
         <p id="saveModalText"></p>
     </div>

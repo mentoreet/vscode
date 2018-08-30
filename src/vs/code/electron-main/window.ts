@@ -152,6 +152,9 @@ export class CodeWindow implements ICodeWindow {
 		if (isLinux) {
 			options.icon = path.join(this.environmentService.appRoot, 'resources/linux/code.png'); // Windows and Mac are better off using the embedded icon(s)
 		}
+		if(isWindows) {
+			options.icon = path.join(this.environmentService.appRoot, 'resources/win32/code_150X150.png');
+		}
 
 		const windowConfig = this.configurationService.getValue<IWindowSettings>('window');
 
@@ -214,7 +217,7 @@ export class CodeWindow implements ICodeWindow {
 			// minWidth: CodeWindow.MIN_WIDTH,
 			// minHeight: CodeWindow.MIN_HEIGHT,
 			show:false,
-			title: '로그인'
+			title: '모두의 코딩 로그인'
 		};
 
 		const controlWinOptions: Electron.BrowserWindowConstructorOptions = {
@@ -232,7 +235,9 @@ export class CodeWindow implements ICodeWindow {
 			// minWidth: CodeWindow.MIN_WIDTH,
 			// minHeight: CodeWindow.MIN_HEIGHT,
 			show:false,
-			title: '로그인'
+			frame:false,
+			resizable:false,
+			title: '모두의 에디터'
 		};
 
 		let loginWin = new BrowserWindow(loginWinOptions);
@@ -375,6 +380,60 @@ export class CodeWindow implements ICodeWindow {
 				let y = ((bounds.y + bounds.height) - this._controlWin.getSize()[1]) - 45;
 
 				this._controlWin.setPosition(x, y, true);
+			}
+		});
+		ipcMain.on('command-controlwindow-minimize', () => {
+			if(this._controlWin) {
+				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
+				let bounds = this.getCurrentDisplayBounds();
+
+				let newControlWinWidth = bounds.width / 3;
+				let newControlWinHeight = 50;
+
+				this._controlWin.setSize(newControlWinWidth, newControlWinHeight);
+
+				let x = ((bounds.x + bounds.width) - this._controlWin.getSize()[0]);
+				let y = ((bounds.y + bounds.height) - this._controlWin.getSize()[1]) - 45;
+
+				this._controlWin.setPosition(x, y, true);
+			}
+		});
+		ipcMain.on('command-controlwindow-maximize', () => {
+			if(this._controlWin) {
+				this._controlWin.maximize();
+			}
+		});
+		ipcMain.on('command-controlwindow-docking', () => {
+			if(this._controlWin) {
+				//일단은 display.bounds를 이용해서 현재 윈도우가 어느 모니터에 있는지 확인을 하고, 그 모니터 한도 내에서 위치를 지정한다.
+				let prevBounds = this.getCurrentDisplayBounds();
+
+				let oldControlWinWidth = this._controlWin.getSize()[0];
+				let oldControlWinHeight = this._controlWin.getSize()[1];
+
+				let newControlWinWidth = prevBounds.width / 3;
+				let newControlWinHeight = prevBounds.height - 50;
+
+				this._controlWin.setSize(newControlWinWidth, newControlWinHeight);
+
+				let x = ((prevBounds.x + prevBounds.width) - this._controlWin.getSize()[0]);
+
+				let nextBounds = this.getCurrentDisplayBounds();
+
+				//사이즈를 조정한 뒤에 다른 모니터로 귀속된 경우
+				if(prevBounds.x !== nextBounds.x ||
+					prevBounds.y !== nextBounds.y) {
+					//사이즈를 원래대로 뒤돌리고
+					this._controlWin.setSize(oldControlWinWidth, oldControlWinHeight);
+
+					//먼저 위치를 조정한 다음에
+					this._controlWin.setPosition(x, prevBounds.y, true);
+					//사이즈를 조절한다.
+					this._controlWin.setSize(newControlWinWidth, newControlWinHeight);
+				}
+				else {
+					this._controlWin.setPosition(x, prevBounds.y, true);
+				}
 			}
 		});
 

@@ -1,5 +1,5 @@
 ﻿const electron = require('electron');
-const {app} = require('electron').remote;
+const { app } = require('electron').remote;
 const path = require('path');
 const ipc = electron.ipcRenderer;
 const https = require('https');
@@ -13,6 +13,8 @@ let isCompleted = false;
 
 let rootDir = '';
 let downloadDir = '';
+
+let examFolders = [];
 
 /**
  * 전체 문제 Array, 초기 시험을 시작할 때 서버와의 통신으로 데이터를 저장.
@@ -42,24 +44,27 @@ let leftTreeExit = document.getElementsByClassName("view_left_menu")[0].querySel
     btnExit = document.getElementsByClassName("view_left_menu")[0].querySelector("ul li:last-of-type"),
     btnComplete = document.getElementById("btnExamFinish"),
     btnNext = document.getElementById("btnNext"),
-    btnPrev = document.getElementById("btnPrev");
+    btnPrev = document.getElementById("btnPrev"),
+    btnMinimize = document.getElementById("btnMinimize"),
+    btnMaximize = document.getElementById("btnMaximize"),
+    btnDocking = document.getElementById("btnDocking");
 
-const download = function(url, dest, cb) {
+const download = function (url, dest, cb) {
     var file = fs.createWriteStream(dest);
-    /*var request =*/ https.get(url, function(response) {
+    /*var request =*/ https.get(url, function (response) {
         response.pipe(file);
-        file.on('finish', function() {
+        file.on('finish', function () {
             file.close(cb);  // close() is async, call cb after close completes.
         });
-    }).on('error', function(err) { // Handle errors
+    }).on('error', function (err) { // Handle errors
         fs.unlink(dest); // Delete the file async. (But we don't check the result)
         if (cb) cb(err.message);
     });
 };
 
-const writeFile = function(filePath, content) {
-    fs.writeFile(filePath, content, function(err) {
-        if(err) {
+const writeFile = function (filePath, content) {
+    fs.writeFile(filePath, content, function (err) {
+        if (err) {
             console.log(err);
             return false;
         }
@@ -69,7 +74,7 @@ const writeFile = function(filePath, content) {
     return true;
 };
 
-const getCodeFileExtension = function(lang) {
+const getCodeFileExtension = function (lang) {
     let ext = '';
     switch (lang) {
         case "c":
@@ -127,13 +132,13 @@ const getCodeFileExtension = function(lang) {
     return ext;
 };
 
-let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
+let prepareProject = function (lang, codeFileName, codeFileDir, callback) {
     let writeResult = false;
     let dotVSCodeDir = path.join(codeFileDir, '.vscode');
     let launch_json_filepath = path.join(dotVSCodeDir, 'launch.json');
     let settings_json_filepath = path.join(dotVSCodeDir, 'settings.json');
     let tasks_json_filepath = path.join(dotVSCodeDir, 'tasks.json');
-    if (!fs.existsSync(dotVSCodeDir)){
+    if (!fs.existsSync(dotVSCodeDir)) {
         fs.mkdirSync(dotVSCodeDir);
     }
 
@@ -154,7 +159,7 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
                 "environment": [],
                 "externalConsole": true,
                 "MIMode": "gdb",
-                "miDebuggerPath": "C:\\Program Files\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\\gdb.exe",
+                "miDebuggerPath": "C:\\\\Program Files\\\\mingw-w64\\\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\\\mingw64\\\\bin\\\\gdb.exe",
                 "setupCommands": [
                     {
                         "description": "Enable pretty-printing for gdb",
@@ -165,7 +170,7 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
             }
         ]
     }`;
-    let c_cpp_tasks_json_content = `{
+    let c_tasks_json_content = `{
         // See https://go.microsoft.com/fwlink/?LinkId=733558
         // for the documentation about the tasks.json format
         "version": "2.0.0",
@@ -178,7 +183,34 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
                     "-g",
                     "-o",
                     "\${fileBasenameNoExtension}.exe",
-                    \${file}"
+                    "\${file}"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                }
+            },
+            {
+                "label": "run app",
+                "type": "shell",
+                "command": "./\${fileBasenameNoExtension}.exe"
+            }
+        ]
+    }`;
+    let cpp_tasks_json_content = `{
+        // See https://go.microsoft.com/fwlink/?LinkId=733558
+        // for the documentation about the tasks.json format
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "build app",
+                "type": "shell",
+                "command": "g++",
+                "args":[
+                    "\${file}",
+                    "-g",
+                    "-o",
+                    "\${fileDirname}/\${fileBasenameNoExtension}"
                 ],
                 "group": {
                     "kind": "build",
@@ -228,14 +260,28 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
 
     switch (lang) {
         case "c":
+            writeResult = writeFile(launch_json_filepath, c_cpp_launch_json_content);
+
+            if (writeResult) {
+                writeResult = writeFile(tasks_json_filepath, c_tasks_json_content);
+            }
+
+            if (writeResult) {
+                console.log('vscode 설정 성공');
+                callback();
+            }
+            else {
+                console.log('vscode 설정 실패');
+            }
+            break;
         case "cpp":
             writeResult = writeFile(launch_json_filepath, c_cpp_launch_json_content);
 
-            if(writeResult) {
-                writeResult = writeFile(tasks_json_filepath, c_cpp_tasks_json_content);
+            if (writeResult) {
+                writeResult = writeFile(tasks_json_filepath, cpp_tasks_json_content);
             }
 
-            if(writeResult) {
+            if (writeResult) {
                 console.log('vscode 설정 성공');
                 callback();
             }
@@ -245,7 +291,7 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
             break;
         case "csharp":
             exec(`"C:\\Program Files\\dotnet\\dotnet" new console -o "${codeFileDir}"`, (error, stdout, stderr) => {
-                if(error) {
+                if (error) {
                     console.log(error);
                     return;
                 }
@@ -262,7 +308,7 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
         case "javascript":
             writeResult = writeFile(launch_json_filepath, js_launch_json_content);
 
-            if(writeResult) {
+            if (writeResult) {
                 console.log('vscode 설정 성공');
                 callback();
             }
@@ -279,11 +325,11 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
         case "python":
             writeResult = writeFile(launch_json_filepath, python_launch_json_content);
 
-            if(writeResult) {
+            if (writeResult) {
                 writeResult = writeFile(settings_json_filepath, python_settings_json_content);
             }
 
-            if(writeResult) {
+            if (writeResult) {
                 console.log('vscode 설정 성공');
                 callback();
             }
@@ -305,7 +351,7 @@ let prepareProject = function(lang, codeFileName, codeFileDir, callback) {
     }
 };
 
-let getFileNameByExt = function(codeFileExt, questionId) {
+let getFileNameByExt = function (codeFileExt, questionId) {
     let fileName = `${questionId}.${codeFileExt}`;
     switch (codeFileExt) {
         case "cs":
@@ -361,16 +407,10 @@ function getFileNameFromUrl(url) {
 function downloadAttachedZipFile(url) {
     //'https://modustorage.blob.core.windows.net/projects/201ef9b5-1cc2-468c-8a85-9659642c9be4.zip'
     let info = {
-        url:url,
-        to:downloadDir
+        url: url,
+        to: downloadDir
     };
 
-    // ipc.send('command-downloadExamSample', {
-    //     url:'https://modustorage.blob.core.windows.net/projects/201ef9b5-1cc2-468c-8a85-9659642c9be4.zip',
-    //     to:directory
-    // });
-//url, dest, cb
-//getFileNameFromUrl
     let filename = getFileNameFromUrl(info.url);
     let filepath = path.join(downloadDir, filename);
 
@@ -379,12 +419,9 @@ function downloadAttachedZipFile(url) {
         () => {
             let targetDir = path.join(downloadDir, filename.replace(".zip", ""));
 
-            if(filename.indexOf('.zip') > 0) {
-                // let cmd = `7z e "${filepath}" -o"${targetDir}" -aoa`;
-                // alert(cmd);
-                //압축풀기
+            if (filename.indexOf('.zip') > 0) {
                 exec(`"C:\\Program Files\\7-Zip\\7z.exe" e "${filepath}" -o"${targetDir}" -aoa`, (error, stdout, stderr) => {
-                    if(error) {
+                    if (error) {
                         alert(error);
                         return;
                     }
@@ -395,8 +432,36 @@ function downloadAttachedZipFile(url) {
                 //let zip1 = new admzip(filepath);
                 //zip1.extractAllTo(targetDir, true);
             }
-            // alert('코딩 샘플 다운로드 완료!');
         });
+}
+
+var deleteFolderRecursive = function (path) {
+    if (fs.existsSync(path)) {
+        try {
+            fs.readdirSync(path).forEach(function (file, index) {
+                var curPath = path + "/" + file;
+                if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                    deleteFolderRecursive(curPath);
+                } else { // delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(path);
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+};
+
+function deleteExamFolders() {
+    if (examFolders && examFolders.length > 0) {
+        examFolders.forEach(function (el) {
+            deleteFolderRecursive(el);
+        });
+    }
+
+    examFolders = [];
 }
 
 ipc.on("control-exam-load", (evt, args) => {
@@ -405,16 +470,20 @@ ipc.on("control-exam-load", (evt, args) => {
     token = args.token;
 
     //폴더 정보 세팅 및 생성
-    rootDir = path.join(app.getPath('appData'),'moducoding');
-    downloadDir = path.join(app.getPath('appData'),'moducoding','download');
+    rootDir = path.join(app.getPath('appData'), 'moducoding');
+    downloadDir = path.join(app.getPath('appData'), 'moducoding', 'download');
 
-    if (!fs.existsSync(rootDir)){
+    deleteFolderRecursive(downloadDir);
+
+    if (!fs.existsSync(rootDir)) {
         fs.mkdirSync(rootDir);
     }
 
-    if (!fs.existsSync(downloadDir)){
+    if (!fs.existsSync(downloadDir)) {
         fs.mkdirSync(downloadDir);
     }
+
+    maximizeControlWindow();
 
     loadWindow();
 });
@@ -423,6 +492,26 @@ function backToDashboard() {
     //여기서 다시 화면을 이전 화면으로 옮기기...
     ipc.send("command-back-to-dashboard");
 }
+
+function minimizeControlWindow() {
+    ipc.send("command-controlwindow-minimize");
+}
+function maximizeControlWindow() {
+    ipc.send("command-controlwindow-maximize");
+}
+function dockControlWindow() {
+    ipc.send("command-controlwindow-docking");
+}
+
+btnMinimize.onclick = function () {
+    minimizeControlWindow();
+};
+btnMaximize.onclick = function () {
+    maximizeControlWindow();
+};
+btnDocking.onclick = function () {
+    dockControlWindow();
+};
 
 leftTreeExit.onpointerenter = function () {
     this.querySelector(".balloon").classList.add("m_on");
@@ -446,8 +535,6 @@ sideMenuClicker.onclick = function () {
 btnExit.onclick = function () {
     if (confirm("정말로 시험을 포기하시겠습니까?")) {
         fnCompleteExam("exit");
-
-        backToDashboard();
     }
 };
 
@@ -473,8 +560,15 @@ let //exam_detail_box = document.getElementsByClassName("exam_detail_box")[0],
  * JQuery .fadeIn, .fadeOut와 같은 방식으로 순수 자바스크립트화.
  * selector: 선택자
 */
-function fnFadeInOut(selector) {
-    var fadeTarget = document.getElementById(selector);
+function fnFadeInOut(selector, type) {
+    var fadeTarget;
+    if (type == null)
+        fadeTarget = document.getElementById(selector);
+    else if (type == "class")
+        fadeTarget = document.getElementsByClassName(selector)[0];
+    else
+        fadeTarget = selector;
+
     var fadeEffect = setInterval(function () {
         if (!fadeTarget.style.opacity) {
             fadeTarget.style.opacity = 1;
@@ -518,21 +612,24 @@ window.onload = function () {
 };
 
 function loadWindow() {
-    var list_box = document.querySelectorAll(".exam_list_cov ul li").length;
-    if (list_box > 5) {
-        exam_list_cov.classList.add("over_five");
-    } else {
-        exam_list_cov.classList.remove("over_five");
-    }
+    // var list_box = document.querySelectorAll(".exam_list_cov ul li").length;
+    // if (list_box > 5) {
+    //     exam_list_cov.classList.add("over_five");
+    // } else {
+    //     exam_list_cov.classList.remove("over_five");
+    // }
+    [0, 1, 2].forEach(function (i) {
+        document.getElementsByClassName("cloud")[i].style.display = "none";
+        document.getElementsByClassName("control_pannel")[0].querySelectorAll("button")[i].onmouseenter = function () {
+            document.getElementsByClassName("cloud")[i].style.display = "block";
+        };
+        document.getElementsByClassName("control_pannel")[0].querySelectorAll("button")[i].onmouseleave = function () {
+            document.getElementsByClassName("cloud")[i].style.display = "none";
+        };
+    });
 
     getMemberExamList();
 
-    // // 시험 제목, 시험 시간, 제출한 시험 문제 수, 총 시험 문제 수
-    // document.getElementById("txtExamTitle").innerHTML = "";
-    // // 시험 제한 시간(분 단위), 시험 응시 시작 일자, 시험 응시 종료 일자
-    // document.getElementById("startLimitTime").innerHTML = "";
-    // document.getElementById("startStartDate").innerHTML = "";
-    // document.getElementById("startEndDate").innerHTML = "";
     // 상단 타이머, 제출한 문제 수, 현재 문제 수
     selectorTimer.innerHTML = "0";
     submittedQuestionCnt.innerHTML = "0";
@@ -543,8 +640,7 @@ let btnStartExam = document.getElementById("getStart").querySelector(".start_btn
     //btnCodingInOut = document.getElementById("btnCodingInOut"),
     btnMultipleSubmit = document.getElementById("btnMultipleSubmit"),
     btnSubjectiveSubmit = document.getElementById("btnSubjectiveSubmit"),
-    btnCodingSubmit = document.getElementById("btnCodingSubmit"),
-    btnExamFinish = document.getElementById("btnExamFinish");
+    btnCodingSubmit = document.getElementById("btnCodingSubmit");
 
 // 초기 화면, "시험 응시하기" 버튼 클릭시 이벤트
 btnStartExam.onclick = function () {
@@ -558,25 +654,26 @@ btnStartExam.onclick = function () {
     fnFadeInOut("getStart");
     AlertModal("지금부터 시험을 시작합니다.");
     fnGetExam();
-
-    var limitMinutes = Number(document.querySelector(".active_list").dataset.limit);
-    startExamTimer(selectorTimer, limitMinutes, function () {
-        // 시간이 지났을 때 이벤트
-        fnCompleteExam("timeout");
-    });
 };
 
-// let codingInOuts = document.getElementsByClassName("code_answer")[0];
+// let inputModal = document.getElementById("inputModal"),
+//     codingInOuts = document.getElementById("codingInOutBody");
 // 코딩 문제의 "입출력 예시 보기" 버튼 클릭시 이벤트
+
 // btnCodingInOut.onclick = function () {
-//     var inOutLength = 1;
-//     for (var i = 0; i < inOutLength; i++) {
-//         var template = '<p class="tit">입력</p><div class="input_box"><p class="input_cont" id="coding_input"><%this.inputTxt%></p></div><p class="tit">출력</p><div class="output_box"><p class="output_cont" id="coding_output"><%this.outputTxt%></p></div>';
-//         var newTemplate = fnTemplateEngine(template, {
-//             inputTxt: "입력 내용",
-//             outputTxt: "출력 내용"
-//         });
-//         codingInOuts.innerHTML = codingInOuts.innerHTML + newTemplate;
+//     if (_selectedVM.type == "coding") {
+//         var inOutLength = _selectedVM.codingInOuts.length;
+//         for (var i = 0; i < inOutLength; i++) {
+//             var $coding_inout_template = document.getElementById("coding-inout-template");
+//             var inoutTemplate = $coding_inout_template.innerHTML.trim();
+//             var newTemplate = fnTemplateEngine(inoutTemplate, {
+//                 input: _selectedVM.codingInOuts[i].input,
+//                 output: _selectedVM.codingInOuts[i].output
+//             });
+
+//             codingInOuts.innerHTML = codingInOuts.innerHTML + newTemplate;
+//         }
+//         inputModal.style.display = "block";
 //     }
 // };
 
@@ -601,15 +698,17 @@ var getMemberExamList = function () {
 
 var fnExamListInit = function (data) {
     data = data.data;
-    console.log(data);
+
     document.getElementById("appendExamList").innerHTML = "";
-    for (var i = 0; i < data.length; i++)
-    {
+    for (var i = 0; i < data.length; i++) {
         var template = '<li data-complete="<%this.isCompleted%>" data-lectureid="<%this.lectureid%>" data-lessonid="<%this.lessonid%>" data-ques="<%this.questionCnt%>" data-desc="<%this.description%>" data-limit="<%this.limitMinutes%>" id="startMenu<%this.idx%>">'
             + '<a href="javascript:;"><div class="info_box"><p class="title_box">'
             + '<span class="exam_num"><%this.idx%></span>.'
             + '<span class="exam_tit"><%this.title%></span>'
-            + '<span class="exam_score">(<b class=exam_scoreNum><%this.score%></b>점)</span></p>'
+            + '<%if(this.isCompleted){%>'
+            + '<span class="exam_score">(<b class=exam_scoreNum><%this.score%></b>점)</span>'
+            + '<%}%>'
+            + '</p>'
             + '<%if(this.startDate != null){%>'
             + '<p class="date"><i class="icon clock"></i><span class="start_date"><%this.startDate.split("T")[0]%></span>'
             + '~<span class="end_date"><%this.endDate.split("T")[0]%></span></p>'
@@ -642,6 +741,22 @@ var fnExamListInit = function (data) {
             document.getElementById("appendExamList").innerHTML + newTemplate;
     }
     fnStartMenuBtn();
+
+    var list_box = document.querySelectorAll(".exam_list_cov ul li").length;
+    var list_cov = document.getElementsByClassName("exam_list_cov")[0];
+    if (window.width > 770) {
+        if (list_box > 5) {
+            list_cov.classList.add("over_five");
+        } else {
+            list_cov.remove.add("over_five");
+        }
+    } else {
+        if (list_box > 3) {
+            list_cov.classList.add("over_five");
+        } else {
+            list_cov.remove.add("over_five");
+        }
+    }
 };
 
 var fnStartMenuBtn = function () {
@@ -649,14 +764,14 @@ var fnStartMenuBtn = function () {
     //let startDetail = document.getElementsByClassName("exam_detail_box")[0];
 
     for (var i = 1; i < _length + 1; i++) {
-        document.getElementById("startMenu" + i).onclick = function ()
-        {
+        document.getElementById("startMenu" + i).onclick = function () {
             for (var i = 0; i < _length; i++) {
                 document.getElementById("appendExamList").querySelectorAll("li")[i].classList.remove("active_list");
                 document.getElementById("appendExamList").querySelectorAll("li")[i].classList.remove("uno_val");
             }
             this.classList.add("active_list");
             this.classList.add("uno_val");
+            document.getElementById("txtExamTitle").innerHTML = this.querySelector(".exam_tit").innerHTML;
             document.getElementById("detailTit").innerHTML = this.querySelector(".exam_tit").innerHTML;
             document.getElementById("detailDesc").innerHTML = this.dataset.desc;
             document.getElementById("detailTotalCnt").innerHTML = this.dataset.ques;
@@ -710,11 +825,6 @@ btnCodingSubmit.onclick = function () {
     fnSubmitQuestion();
 };
 
-// 최종 완료 클릭
-btnExamFinish.onclick = function () {
-    ipc.send("command-controlwindow-lefttop");
-};
-
 /**
  * 선택된 시험 문제 데이터를 화면에 표현.
  * 호출 위치: (1) fnGetExam() 호출시 성공하면 호출.
@@ -730,7 +840,7 @@ var fnFillQuestion = function (_index) {
         subTitle = document.getElementById("subjective_title"),
         subScore = document.getElementById("subjective_score"),
         subDesc = document.getElementById("subjective_description");//,
-        //subAnswer = document.getElementById("txtSubjectiveAnswer");
+    //subAnswer = document.getElementById("txtSubjectiveAnswer");
     // 코딩 문제 선택자
     let codingWrap = document.getElementsByClassName("coding")[0],
         codingTitle = document.getElementById("coding_title"),
@@ -755,15 +865,21 @@ var fnFillQuestion = function (_index) {
             var examples = target.multipleExamples;
             for (var i = 1; i < 5; i++) {
                 var _target = "multiple" + i;
-                document.getElementById(_target).innerHTML = examples[i-1].example;
+                document.getElementById(_target).innerHTML = examples[i - 1].example;
             }
             multiWrap.style.display = "block";
+
+            //객관식 문제의 경우 전체 화면으로
+            maximizeControlWindow();
             break;
         } case "subjective": {
             subTitle.innerHTML = target.title;
             subScore.innerHTML = target.score;
             subDesc.innerHTML = target.contents;
             subWrap.style.display = "block";
+
+            //주관식 문제의 경우 전체 화면으로
+            maximizeControlWindow();
             break;
         } case "coding": {
             codingTitle.innerHTML = target.title;
@@ -771,7 +887,7 @@ var fnFillQuestion = function (_index) {
             codingDesc.innerHTML = target.contents;
 
             let sampleCodes = target.codingExamples;
-            if(sampleCodes && sampleCodes.length > 0) {
+            if (sampleCodes && sampleCodes.length > 0) {
                 let sampleCode = sampleCodes[0];
                 //샘플 코드를 파일로 저장하고 그 파일을 코드로 열자.
                 let codeFileDir = path.join(downloadDir, `${target.questionId}`);
@@ -780,15 +896,17 @@ var fnFillQuestion = function (_index) {
                 let codeFilePath = path.join(codeFileDir, codeFileName);
                 let code = sampleCode.code;
 
-                if (!fs.existsSync(codeFileDir)){
+                if (!fs.existsSync(codeFileDir)) {
                     fs.mkdirSync(codeFileDir);
+
+                    examFolders.push(codeFileDir);
                 }
 
                 //여기서 우선 cs의 경우 dotnet프로세스를 통해서 프로젝트를 준비해야 한다.
                 prepareProject(sampleCode.language, codeFileName, codeFileDir, function () {
                     let writeResult = writeFile(codeFilePath, code);
 
-                    if(writeResult) {
+                    if (writeResult) {
                         console.log(`파일 열기 : ${codeFileDir} ${codeFilePath}`);
                         console.log([codeFileDir, codeFilePath]);
                         ipc.send('command-openfiles', [codeFileDir, codeFilePath]);
@@ -806,6 +924,9 @@ var fnFillQuestion = function (_index) {
                 codingOutput.innerHTML = inOuts.output;
             }
             codingWrap.style.display = "block";
+
+            //코딩 문제의 경우 도킹으로 전환
+            dockControlWindow();
             break;
         }
     }
@@ -828,8 +949,12 @@ var fnSubmitQuestion = function () {
             answer = Number(multiWrap.querySelector("input[type=radio]:checked").getAttribute("data-value"));
         }
     }
-    else if (type == "subjective")
+    else if (type == "subjective") {
         answer = document.getElementById("txtSubjectiveAnswer").value;
+    }
+    else if (type === "coding") {
+        //코딩 문제 제출
+    }
 
     if (answer == null || answer == "") {
         AlertModal("답안을 작성해주세요", false);
@@ -846,8 +971,10 @@ var fnSubmitQuestion = function () {
         fnCheckMenusBySubmit();
         continueSubmit(answer);
     }
-    function continueSubmit (answer) {
+    function continueSubmit(answer) {
         fnToggleLoaderBox();
+        _selectedVM.isSubmited = true;
+        _questionVM[_selectedVM.index].isSubmited = true;
 
         var data = new Object();
         data.LectureId = lectureId;
@@ -861,12 +988,21 @@ var fnSubmitQuestion = function () {
                 console.log(result);
                 fnToggleLoaderBox();
                 AlertModal("답안이 제출되었습니다");
+                // 주관식, 객관식 문제 답안 초기화
+                document.getElementById("txtSubjectiveAnswer").value = "";
+                ["choice01", "choice02", "choice03", "choice04"].forEach(function (id) {
+                    document.getElementById(id).checked = false;
+                });
 
                 var maxIndex = _questionVM.length;
                 var nextIndex = eval(currentIndex + 1);
                 if (maxIndex > nextIndex)
                     document.getElementById("topSelect").options[nextIndex].selected = true;
                 fnChangeVM("next");
+
+                if (Number(currentQuestionIndex[0].innerHTML) == Number(totalQuestionIndex[0].innerHTML)) {
+                    AlertModal("모든 문제의 답안을 제출하였다면, <br/>최종 완료를 클릭하여 시험을 마무리해주세요.", false, 5000);
+                }
             },
             function (failed) {
                 console.log(failed);
@@ -891,12 +1027,14 @@ var fnGetExam = function (action) {
     sendPostWithToken("http://localhost:5070/api/Question",
         token,
         data,
-        function (result)
-        {
-            console.log(result);
+        function (result) {
             if (!result.isPossibleToTakeExam) {
                 AlertModal(result.impossibleMessage, false);
+                fnFadeInOut("getStart");
             }
+
+            document.getElementById("topInfo").style.display = "block";
+            document.getElementById("btnExamFinish").style.display = "block";
 
             _questionVM = result.questionsVM;
             for (let i = 0; i < _questionVM.length; i++) {
@@ -905,19 +1043,22 @@ var fnGetExam = function (action) {
                     submittedQuestionCnt.innerHTML = Number(submittedQuestionCnt.innerHTML) + 1;
                 }
             }
+
+            startExamTimer(selectorTimer, result.examTime, function () {
+                fnCompleteExam("timeout");
+            });
+
             fnFillQuestion(0);
             fnMakeMenus();
-            if(totalQuestionIndex[0]) {
+            if (totalQuestionIndex[0]) {
                 totalQuestionIndex[0].innerHTML = _questionVM.length;
             }
-            if(totalQuestionIndex[1]) {
+            if (totalQuestionIndex[1]) {
                 totalQuestionIndex[1].innerHTML = _questionVM.length;
             }
             fnToggleLoaderBox();
         },
-        function (failed)
-        {
-            console.log(failed);
+        function (failed) {
             fnToggleLoaderBox();
         }
     );
@@ -970,7 +1111,7 @@ var fnChangeVM = function (type) {
     }
 
     try {
-        if (_questionVM[targetIndex].questionId > 0) {
+        if (_questionVM[targetIndex] != null) {
             _selectedVM = _questionVM[targetIndex];
             currentIndex = _selectedVM.index;
         }
@@ -979,7 +1120,7 @@ var fnChangeVM = function (type) {
         console.log(e);
     }
 
-    if (originalIndex  != currentIndex)
+    if (originalIndex != currentIndex)
         fnFillQuestion(currentIndex);
 };
 
@@ -992,15 +1133,6 @@ var fnChangeVM = function (type) {
  */
 var fnCompleteExam = function (type) {
     fnToggleLoaderBox();
-    if (type == "timeout") {
-        // 시간 종료로 인해 최종 완료가 되는 경우, 기본 제공 Alert 사용.
-        alert("시험 시간이 종료되었습니다. 수고하셨습니다.");
-        //AlertModal("시험 시간이 종료되었습니다. 수고하셨습니다.", true, 7000);
-    } else if (type == "exit") {
-        AlertModal("현재까지 제출된 정답으로 최종 완료됩니다.", true, 7000);
-    } else {
-        AlertModal("최종 완료되었습니다. 수고하셨습니다.", true, 7000);
-    }
 
     var data = new Object();
     data.LessonId = lessonId;
@@ -1018,6 +1150,19 @@ var fnCompleteExam = function (type) {
             AlertModal("데이터 전송중 오류가 발생했습니다", false);
         }
     );
+
+    if (type == "timeout") {
+        // 시간 종료로 인해 최종 완료가 되는 경우, 기본 제공 Alert 사용.
+        alert("시험 시간이 종료되었습니다. 수고하셨습니다.");
+        //AlertModal("시험 시간이 종료되었습니다. 수고하셨습니다.", true, 7000);
+    } else if (type == "exit") {
+        AlertModal("현재까지 제출된 정답으로 최종 완료됩니다.", true, 7000);
+    } else {
+        AlertModal("최종 완료되었습니다. 수고하셨습니다.", true, 7000);
+    }
+
+    deleteExamFolders();
+    backToDashboard();
 };
 
 /**
@@ -1078,7 +1223,7 @@ function fnMakeMenus() {
         });
         sideMenuList.innerHTML = sideMenuList.innerHTML + newTemplate;
 
-        var optTemplate = '<option data-index="<%this.realIndex%>">문제 <%this.index%>. <%this.title%><%if(this.isSubmited == true){%> ●<%}%></option>';
+        var optTemplate = '<option data-index="<%this.realIndex%>">문제 <%this.index%> <%if(this.isSubmited == true){%> ●<%}%></option>';
         var newOptTemplate = fnTemplateEngine(optTemplate, {
             realIndex: target.index,
             index: eval(target.index + 1),
