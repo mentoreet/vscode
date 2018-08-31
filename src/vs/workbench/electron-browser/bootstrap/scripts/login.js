@@ -12,14 +12,15 @@ document.getElementById("btnLogin").onclick = function () {
 	let _loginMsg = getElem("password-error");
 
 	var param = { email: _email, password: _password };
-	sendPost('http://localhost:5070/api/token',
+	sendPost('https://capi.moducoding.com/api/token',
 		param,
 		function (result) { //성공시
 			if (result.token !== '') {
 				let session = {
 					userId: 1,
 					email: _email,
-					token: result.token
+					token: result.token,
+					memberToken: result.memberToken
 					//name: '어쩌고저쩌고',
 					//roles: []};
 				};

@@ -281,7 +281,7 @@ export class CodeWindow implements ICodeWindow {
 				this._controlWin.maximize();
 
 				//this._controlWin.webContents.send('control-load-data', this._session.token);
-				this._controlWin.webContents.send('control-exam-load', {token : this._session.token});
+				this._controlWin.webContents.send('control-exam-load', {token : this._session.token, memberToken: this._session.memberToken});
 			});
 
 			this._controlWin.on('closed', () => {
@@ -311,7 +311,7 @@ export class CodeWindow implements ICodeWindow {
 			let _session = this._session;
 			this._controlWin.webContents.on('did-finish-load', function() {
 				//_controlWin.webContents.send('control-load-data', _session.token);
-				_controlWin.webContents.send('control-exam-load', {token : _session.token});
+				_controlWin.webContents.send('control-exam-load', {token : _session.token, memberToken: _session.memberToken});
 			});
 		});
 

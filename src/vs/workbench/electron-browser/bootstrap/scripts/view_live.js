@@ -9,6 +9,7 @@ const { exec } = require('child_process');
 let lectureId = 0;
 let lessonId = 0;
 let token = '';
+let roomToken = '';
 let isCompleted = false;
 
 let rootDir = '';
@@ -420,7 +421,7 @@ function downloadAttachedZipFile(url) {
             let targetDir = path.join(downloadDir, filename.replace(".zip", ""));
 
             if (filename.indexOf('.zip') > 0) {
-                exec(`"C:\\Program Files\\7-Zip\\7z.exe" e "${filepath}" -o"${targetDir}" -aoa`, (error, stdout, stderr) => {
+                exec(`"C:\\Program Files\\7-Zip\\7z.exe" x "${filepath}" -o"${targetDir}" -aoa`, (error, stdout, stderr) => {
                     if (error) {
                         alert(error);
                         return;
@@ -468,6 +469,7 @@ ipc.on("control-exam-load", (evt, args) => {
     // lectureId = args.lectureId;
     // lessonId = args.lessonId;
     token = args.token;
+    roomToken = args.memberToken;
 
     //폴더 정보 세팅 및 생성
     rootDir = path.join(app.getPath('appData'), 'moducoding');
@@ -681,7 +683,7 @@ btnStartExam.onclick = function () {
 var getMemberExamList = function () {
     fnToggleLoaderBox();
     var data = new Object();
-    sendPostWithToken("http://localhost:5070/api/Question/List",
+    sendPostWithToken("https://capi.moducoding.com/api/Question/List",
         token,
         data,
         function (result) {
@@ -981,7 +983,7 @@ var fnSubmitQuestion = function () {
         data.LessonId = lessonId;
         data.QuestionId = _selectedVM.questionId;
         data.Answer = answer;
-        sendPostWithToken("http://localhost:5070/api/Question/Submit",
+        sendPostWithToken("https://capi.moducoding.com/api/Question/Submit",
             token,
             data,
             function (result) {
@@ -1024,7 +1026,7 @@ var fnGetExam = function (action) {
     var data = new Object();
     data.LectureId = lectureId;
     data.LessonId = lessonId;
-    sendPostWithToken("http://localhost:5070/api/Question",
+    sendPostWithToken("https://capi.moducoding.com/api/Question",
         token,
         data,
         function (result) {
@@ -1136,7 +1138,7 @@ var fnCompleteExam = function (type) {
 
     var data = new Object();
     data.LessonId = lessonId;
-    sendPostWithToken("http://localhost:5070/api/Exam/Complete",
+    sendPostWithToken("https://capi.moducoding.com/api/Exam/Complete",
         token,
         data,
         function (result) {

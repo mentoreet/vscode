@@ -9,7 +9,7 @@ btnSome.onclick = function () {
 let txtFocused = getElem("txtFocused");
 
 ipc.on("control-load-data", (evt, token) => {
-	sendPostWithToken('http://localhost:5070/api/Exam',
+	sendPostWithToken('https://capi.moducoding.com/api/Exam',
 		token,
 		{"LectureId" : 306},
 		function (result) { //성공시
